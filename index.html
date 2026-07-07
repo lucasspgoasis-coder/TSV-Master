@@ -120,10 +120,10 @@
 
     <main class="w-full max-w-6xl space-y-8">
         
-        <!-- Cabeçalho Principal -->
+        <!-- Cabeçalho Principal (Contorno verde e fundo da logo removidos para transparência perfeita) -->
         <header class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="bg-emerald-50 p-2 rounded-xl">
+                <div class="p-0">
                     <img src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="h-14 w-auto object-contain drop-shadow-sm">
                 </div>
                 <div>
@@ -369,13 +369,13 @@
         </div>
     </main>
 
-    <!-- TEMPLATE DE EXPORTAÇÃO EXCLUSIVO 1280x720 HD -->
+    <!-- TEMPLATE DE EXPORTAÇÃO EXCLUSIVO 1280x720 HD (Contorno verde e fundo da logo removidos para transparência perfeita) -->
     <div id="export-comp-container" class="export-container">
         <div id="export-comp-page" class="export-page-hd">
             <!-- Linha 1: Cabeçalho -->
             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #059669; padding-bottom: 15px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="background-color: #ecfdf5; padding: 10px; border-radius: 12px;">
+                    <div style="padding: 0; border-radius: 0;">
                         <img src="https://i.imgur.com/wEozr34.png" alt="Logo" style="height: 50px;">
                     </div>
                     <div>
@@ -503,9 +503,9 @@
             });
 
             const getNum = (input) => { const v = parseFloat(input.value); return isNaN(v) ? 0 : v; };
-            const formatPerc = (v) => (!isFinite(v) || isNaN(v)) ? "0.00%" : v.toFixed(2) + "%";
+            const formatPerc = (v) => (!isFinite(v) || isNaN(v)) ? "0,00%" : v.toFixed(2).replace('.', ',') + "%";
             
-            const parsePercNumber = (str) => parseFloat(String(str).replace(/[^\d.-]/g, '')) || 0;
+            const parsePercNumber = (str) => parseFloat(String(str).replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
 
             const calculateAll = () => {
                 const bandejas = getNum(els.bandejas);
@@ -594,6 +594,8 @@
                     const rawPercGerm = parsePercNumber(rec.percGerminada);
                     const rawPercMort = parsePercNumber(rec.percMort);
                     
+                    const formatVisPerc = (val) => parseFloat(val.toFixed(2)).toLocaleString('pt-BR');
+                    
                     const statusColor = rawPercMort > 5 ? 'bg-rose-500' : 'bg-emerald-500';
                     
                     const card = document.createElement('div');
@@ -629,7 +631,7 @@
                                 <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 hover:border-slate-200 transition-colors">
                                     <div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Taxa de Germinação</div>
                                     <div class="flex items-baseline gap-1.5">
-                                        <span class="text-lg font-extrabold text-emerald-600">${rawPercGerm.toFixed(1)}%</span>
+                                        <span class="text-lg font-extrabold text-emerald-600">${formatVisPerc(rawPercGerm)}%</span>
                                         <span class="text-[10px] text-amber-500 font-bold">(${rec.falhas || 0} falhas)</span>
                                     </div>
                                     <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
@@ -640,7 +642,7 @@
                                 <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 hover:border-slate-200 transition-colors">
                                     <div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Taxa de Mortalidade</div>
                                     <div class="flex items-baseline gap-1.5">
-                                        <span class="text-lg font-extrabold ${rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700'}">${rawPercMort.toFixed(1)}%</span>
+                                        <span class="text-lg font-extrabold ${rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700'}">${formatVisPerc(rawPercMort)}%</span>
                                         <span class="text-[10px] text-rose-400 font-bold">(${rec.mortas || 0} mortas)</span>
                                     </div>
                                     <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
@@ -675,13 +677,14 @@
             const updateCharts = (data) => {
                 const labels = data.map(d => `Bl. ${d.nomeBloco}`);
                 
+                // Configuração das labels nos gráficos: máximo de 2 casas decimais formatado com vírgula
                 const datalabelsConfig = {
                     color: '#334155',
                     font: { weight: '800', size: 10, family: 'Inter' },
                     anchor: 'end',
                     align: 'top',
                     offset: 2,
-                    formatter: (value) => value > 0 ? value.toFixed(1) + '%' : ''
+                    formatter: (value) => value > 0 ? parseFloat(value.toFixed(2)).toLocaleString('pt-BR') + '%' : ''
                 };
 
                 const commonOptions = {
@@ -771,7 +774,7 @@
                                 borderRadius: 6,
                                 yAxisID: 'y',
                                 barPercentage: 0.6,
-                                datalabels: { formatter: (v) => v > 0 ? v.toFixed(0) + 'L' : '', color: '#1e40af' }
+                                datalabels: { formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#1e40af' }
                             },
                             {
                                 type: 'line',
@@ -784,7 +787,7 @@
                                 pointHoverRadius: 6,
                                 tension: 0.3,
                                 yAxisID: 'y1',
-                                datalabels: { align: 'top', anchor: 'end', formatter: (v) => v > 0 ? v.toFixed(1) : '', color: '#0f172a' }
+                                datalabels: { align: 'top', anchor: 'end', formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' }
                             }
                         ]
                     },
@@ -945,6 +948,9 @@
                 sortedRecords.forEach(rec => {
                     const rawPercGerm = parsePercNumber(rec.percGerminada);
                     const rawPercFalhas = parsePercNumber(rec.percFalhas);
+                    const rawPercMort = parsePercNumber(rec.percMort);
+                    
+                    const formatExpPerc = (val) => parseFloat(val.toFixed(2)).toLocaleString('pt-BR');
                     
                     const tr = document.createElement('tr');
                     tr.style.borderBottom = '1px solid #e2e8f0';
@@ -958,11 +964,11 @@
                             <div style="font-size: 11px; color: #64748b;">/ ${rec.transplantado || 0} transp.</div>
                         </td>
                         <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0; font-weight: 700;">
-                            <span style="color: #10b981;">${rawPercGerm.toFixed(1)}%</span> | 
-                            <span style="color: #d97706;">${rawPercFalhas.toFixed(1)}%</span>
+                            <span style="color: #10b981;">${formatExpPerc(rawPercGerm)}%</span> | 
+                            <span style="color: #d97706;">${formatExpPerc(rawPercFalhas)}%</span>
                         </td>
                         <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0;">
-                            <div style="font-weight: 800; color: ${parsePercNumber(rec.percMort) > 5 ? '#e11d48' : '#334155'};">${rec.percMort}</div>
+                            <div style="font-weight: 800; color: ${rawPercMort > 5 ? '#e11d48' : '#334155'};">${formatExpPerc(rawPercMort)}%</div>
                         </td>
                         <td style="padding: 10px 12px;">
                             <div style="font-weight: 700; color: #2563eb;">${rec.volIrrigacao || 0} L</div>
