@@ -8,11 +8,19 @@
     <!-- Bibliotecas Necessárias -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- html-to-image e jsPDF para exportação perfeita -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Chart.js para os gráficos e Plugin de Labels -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; }
         
         /* Ocultar setas dos inputs numéricos para visual mais limpo */
         input[type=number]::-webkit-inner-spin-button, 
@@ -22,22 +30,22 @@
         /* Estilos personalizados para os inputs */
         .input-field {
             width: 100%;
-            border-radius: 0.375rem;
+            border-radius: 0.5rem;
             border: 1px solid #cbd5e1;
             padding: 0.5rem 0.75rem;
             font-size: 0.875rem;
-            color: #334155;
-            transition: all 0.2s;
+            color: #1e293b;
+            transition: all 0.2s ease-in-out;
             background-color: #ffffff;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
         }
         .input-field:focus {
             outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
         .input-readonly {
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             border-color: #e2e8f0;
             color: #475569;
             font-weight: 600;
@@ -47,64 +55,105 @@
             display: flex;
             align-items: center;
             gap: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #475569;
-            margin-bottom: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 0.375rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #0f766e;
-            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #065f46;
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-bottom: 2px solid #ccfbf1;
+            border-bottom: 2px solid #e2e8f0;
             padding-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
+
+        /* Container de exportação invisível em tela em proporção exata 1280x720 */
+        .export-container {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            background: white;
+            z-index: -1000;
+        }
+        
+        .export-page-hd {
+            width: 1280px;
+            height: 720px;
+            padding: 30px;
+            background: #ffffff;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        
+        /* Custom Scrollbar para uma aparência premium */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen p-4 md:p-6 flex flex-col items-center">
 
-    <main class="w-full max-w-6xl space-y-6">
+    <main class="w-full max-w-6xl space-y-8">
         
-        <header class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Cabeçalho Principal -->
+        <header class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <img src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="h-20 w-auto object-contain">
+                <div class="bg-emerald-50 p-2 rounded-xl">
+                    <img src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="h-14 w-auto object-contain drop-shadow-sm">
+                </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">Registro Geral TSV Master</h1>
-                    <p class="text-emerald-600 font-medium text-lg">Fazenda Oásis</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Registro Geral TSV Master</h1>
+                    <p class="text-emerald-600 font-semibold text-sm flex items-center gap-1 mt-0.5">
+                        <i class="ph-fill ph-leaf"></i> Fazenda Oásis — Controle Agrícola de Precisão
+                    </p>
                 </div>
             </div>
-            <div class="text-right hidden md:block text-sm text-slate-500">
-                <p><i class="ph ph-calendar-blank mr-1"></i> <span id="current-date"></span></p>
-                <p>Controle Agrícola de Precisão</p>
+            <div class="text-right hidden md:block">
+                <p class="font-medium text-slate-500 text-sm flex justify-end items-center gap-1"><i class="ph ph-calendar-blank"></i> <span id="current-date"></span></p>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 mt-2 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> SISTEMA ATIVO
+                </span>
             </div>
         </header>
 
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="bg-slate-50 p-4 border-b border-slate-200 flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2" id="form-title">
-                    <i class="ph ph-plus-circle text-emerald-600 text-xl"></i>
+        <!-- Formulário de Lançamento -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-50 to-white px-6 py-4 border-b border-slate-200/80 flex justify-between items-center">
+                <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2" id="form-title">
+                    <div class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg"><i class="ph-bold ph-plus"></i></div>
                     Novo Registro de Bloco
                 </h2>
-                <button type="button" id="btn-cancel-edit" class="hidden text-sm text-slate-500 hover:text-red-500 font-medium">
-                    Cancelar Edição
+                <button type="button" id="btn-cancel-edit" class="hidden px-3 py-1.5 rounded-lg bg-rose-50 text-xs text-rose-600 hover:bg-rose-100 font-bold transition-colors flex items-center gap-1 border border-rose-200">
+                    <i class="ph-bold ph-x"></i> Cancelar
                 </button>
             </div>
             
-            <form id="tsv-form" class="p-6 space-y-8">
+            <form id="tsv-form" class="p-6 space-y-6">
                 
                 <!-- Identificação e Irrigação -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <section>
-                        <h3 class="section-title"><i class="ph ph-map-pin"></i> Identificação</h3>
+                    <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                        <h3 class="section-title"><i class="ph-fill ph-map-pin"></i> Identificação</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="bloco" class="label-style"><i class="ph ph-squares-four text-emerald-600"></i> Selecione o Bloco</label>
-                                <select id="bloco" class="input-field" required>
-                                    <option value="">Selecione...</option>
+                                <label for="bloco" class="label-style">Selecione o Bloco</label>
+                                <select id="bloco" class="input-field font-medium" required>
+                                    <option value="">Selecionar...</option>
                                     <option value="01">Bloco 01</option>
                                     <option value="02">Bloco 02</option>
                                     <option value="03">Bloco 03</option>
@@ -119,261 +168,280 @@
                                 </select>
                             </div>
                             <div id="bloco-outro-container" class="hidden">
-                                <label for="bloco-outro" class="label-style"><i class="ph ph-pencil text-emerald-600"></i> Digite o Bloco</label>
+                                <label for="bloco-outro" class="label-style">Digite o Bloco</label>
                                 <input type="text" id="bloco-outro" placeholder="Ex: 11B" class="input-field">
                             </div>
                             <div class="sm:col-span-2">
-                                <label for="ciclo-bloco" class="label-style"><i class="ph ph-arrows-clockwise text-emerald-600"></i> Ciclo do Bloco</label>
-                                <input type="text" id="ciclo-bloco" placeholder="Ex: Verão 2024 / 1º Semestre" class="input-field">
+                                <label for="ciclo-bloco" class="label-style">Ciclo do Bloco</label>
+                                <input type="text" id="ciclo-bloco" placeholder="Ex: Inverno 2024 / 2º Semestre" class="input-field">
                             </div>
                         </div>
                     </section>
 
-                    <section>
-                        <h3 class="section-title"><i class="ph ph-drop"></i> Dados de Irrigação</h3>
+                    <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                        <h3 class="section-title"><i class="ph-fill ph-drop text-blue-500"></i> Dados de Irrigação</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="volume-irrigacao" class="label-style"><i class="ph ph-waves text-blue-500"></i> Volume (Litros)</label>
-                                <input type="number" id="volume-irrigacao" placeholder="0" class="input-field">
+                                <label for="volume-irrigacao" class="label-style">Volume Total (Litros)</label>
+                                <input type="number" id="volume-irrigacao" placeholder="0" class="input-field font-semibold text-blue-800">
                             </div>
                             <div>
-                                <label for="litros-planta" class="label-style"><i class="ph ph-plant text-blue-500"></i> Litros por Planta</label>
-                                <input type="text" id="litros-planta" readonly placeholder="0.00 L" class="input-field input-readonly text-blue-700">
+                                <label for="litros-planta" class="label-style">Litros por Planta</label>
+                                <input type="text" id="litros-planta" readonly placeholder="0.00 L" class="input-field input-readonly text-blue-600 font-bold">
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <section>
-                    <h3 class="section-title"><i class="ph ph-spade"></i> Sementeira e Transplantio</h3>
+                <!-- Sementeira e Transplantio -->
+                <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="section-title"><i class="ph-fill ph-plant"></i> Sementeira e Transplantio</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div>
-                            <label for="total-bandejas" class="label-style"><i class="ph ph-grid-nine text-emerald-600"></i> Total Bandejas</label>
+                            <label for="total-bandejas" class="label-style">Total Bandejas</label>
                             <input type="number" id="total-bandejas" placeholder="0" class="input-field" required>
                         </div>
                         <div>
-                            <label for="total-mudas" class="label-style"><i class="ph ph-potted-plant text-emerald-600"></i> Mudas Previstas</label>
+                            <label for="total-mudas" class="label-style">Mudas Previstas</label>
                             <input type="number" id="total-mudas" readonly class="input-field input-readonly text-emerald-700">
-                            <span class="text-xs text-slate-400 mt-1 block">Calculado (x200)</span>
+                            <span class="text-[10px] text-slate-400 mt-1 font-medium block">Calculado (Bandejas × 200)</span>
                         </div>
                         <div>
-                            <label for="transplantado" class="label-style"><i class="ph ph-tree-palm text-emerald-600"></i> Qtd. Transplantada</label>
-                            <input type="number" id="transplantado" placeholder="0" class="input-field" required>
+                            <label for="transplantado" class="label-style">Qtd. Transplantada</label>
+                            <input type="number" id="transplantado" placeholder="0" class="input-field font-semibold" required>
                         </div>
                         <div>
-                            <label for="falhas-germinacao" class="label-style"><i class="ph ph-x-circle text-red-500"></i> Falhas Germinação</label>
-                            <input type="number" id="falhas-germinacao" readonly class="input-field input-readonly text-red-600">
-                            <span class="text-xs text-slate-400 mt-1 block">Automático</span>
+                            <label for="falhas-germinacao" class="label-style">Falhas Germinação</label>
+                            <input type="number" id="falhas-germinacao" readonly class="input-field input-readonly text-amber-600">
                         </div>
                         <div class="flex flex-col gap-2">
                             <div>
-                                <label class="label-style text-xs"><i class="ph ph-check-circle text-emerald-500"></i> % Germinada</label>
-                                <input type="text" id="perc-germinada" readonly placeholder="0.00%" class="input-field input-readonly h-8 text-sm text-emerald-700">
+                                <label class="text-[10px] uppercase font-bold text-slate-500">Taxa Germinada</label>
+                                <input type="text" id="perc-germinada" readonly placeholder="0.00%" class="input-field input-readonly h-8 text-xs text-emerald-700 font-bold border-emerald-200 bg-emerald-50">
                             </div>
                             <div>
-                                <label class="label-style text-xs"><i class="ph ph-warning text-red-500"></i> % Falhas</label>
-                                <input type="text" id="perc-falhas" readonly placeholder="0.00%" class="input-field input-readonly h-8 text-sm text-red-600">
+                                <label class="text-[10px] uppercase font-bold text-slate-500">Taxa de Falhas</label>
+                                <input type="text" id="perc-falhas" readonly placeholder="0.00%" class="input-field input-readonly h-8 text-xs text-amber-700 font-bold border-amber-200 bg-amber-50">
                             </div>
                         </div>
                     </div>
                 </section>
 
+                <!-- Desenvolvimento, Perdas e Cronograma -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <section>
-                        <h3 class="section-title"><i class="ph ph-chart-line-up"></i> Desenvolvimento e Perdas</h3>
+                    <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                        <h3 class="section-title"><i class="ph-fill ph-trend-down text-rose-500"></i> Desenvolvimento e Perdas</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
                             <div class="col-span-2 sm:col-span-1">
-                                <label for="tempo-producao" class="label-style"><i class="ph ph-hourglass text-emerald-600"></i> Tempo Prod. (dias)</label>
+                                <label for="tempo-producao" class="label-style">Tempo Prod. (dias)</label>
                                 <input type="number" id="tempo-producao" placeholder="Ex: 45" class="input-field">
                             </div>
                             <div>
-                                <label for="plantas-mortas" class="label-style"><i class="ph ph-skull text-slate-500"></i> Plantas Mortas</label>
-                                <input type="number" id="plantas-mortas" placeholder="0" class="input-field">
+                                <label for="plantas-mortas" class="label-style text-rose-600">Plantas Mortas</label>
+                                <input type="number" id="plantas-mortas" placeholder="0" class="input-field border-rose-200 focus:border-rose-500 focus:shadow-rose-100">
                             </div>
                             <div>
-                                <label for="perc-mortalidade" class="label-style"><i class="ph ph-percent text-slate-500"></i> % Mortalidade</label>
-                                <input type="text" id="perc-mortalidade" readonly placeholder="0.00%" class="input-field input-readonly text-red-600">
+                                <label for="perc-mortalidade" class="label-style text-rose-600">% Mortalidade</label>
+                                <input type="text" id="perc-mortalidade" readonly placeholder="0.00%" class="input-field input-readonly text-rose-700 bg-rose-50 border-rose-100">
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col sm:flex-row gap-2">
                                 <div class="flex-1">
-                                    <label for="cabecas-pequenas" class="label-style"><i class="ph ph-arrows-in text-amber-500"></i> Cab. Pequenas</label>
+                                    <label for="cabecas-pequenas" class="label-style">Cab. Pequenas</label>
                                     <input type="number" id="cabecas-pequenas" placeholder="0" class="input-field">
                                 </div>
-                                <div class="w-full sm:w-24">
-                                    <label class="label-style">&nbsp;</label>
-                                    <input type="text" id="perc-cabecas-pequenas" readonly placeholder="0%" title="% Pequenas" class="input-field input-readonly text-amber-700">
+                                <div class="w-full sm:w-20">
+                                    <label class="label-style text-[10px] text-slate-400">Proporção</label>
+                                    <input type="text" id="perc-cabecas-pequenas" readonly placeholder="0%" class="input-field input-readonly text-slate-600 text-xs">
                                 </div>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-2">
                                 <div class="flex-1">
-                                    <label for="cabecas-deformadas" class="label-style"><i class="ph ph-exclude text-amber-500"></i> Cab. Deformadas</label>
+                                    <label for="cabecas-deformadas" class="label-style">Cab. Deformadas</label>
                                     <input type="number" id="cabecas-deformadas" placeholder="0" class="input-field">
                                 </div>
-                                <div class="w-full sm:w-24">
-                                    <label class="label-style">&nbsp;</label>
-                                    <input type="text" id="perc-cabecas-deformadas" readonly placeholder="0%" title="% Deformadas" class="input-field input-readonly text-amber-700">
+                                <div class="w-full sm:w-20">
+                                    <label class="label-style text-[10px] text-slate-400">Proporção</label>
+                                    <input type="text" id="perc-cabecas-deformadas" readonly placeholder="0%" class="input-field input-readonly text-slate-600 text-xs">
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    <section>
-                        <h3 class="section-title"><i class="ph ph-calendar"></i> Cronograma</h3>
+                    <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                        <h3 class="section-title"><i class="ph-fill ph-calendar-check"></i> Cronograma</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="data-transplantio" class="label-style"><i class="ph ph-calendar-plus text-emerald-600"></i> Transplantio</label>
+                                <label for="data-transplantio" class="label-style">Data Transplantio</label>
                                 <input type="date" id="data-transplantio" class="input-field">
                             </div>
                             <div>
-                                <label for="data-colheita" class="label-style"><i class="ph ph-calendar-check text-emerald-600"></i> Prev. Colheita</label>
+                                <label for="data-colheita" class="label-style">Prev. Colheita</label>
                                 <input type="date" id="data-colheita" class="input-field">
                             </div>
                             <div>
-                                <label for="total-dias-colheita" class="label-style"><i class="ph ph-clock text-blue-500"></i> Dias p/ Colheita</label>
-                                <input type="text" id="total-dias-colheita" readonly placeholder="Automático" class="input-field input-readonly text-blue-700">
+                                <label for="total-dias-colheita" class="label-style">Dias p/ Colheita</label>
+                                <input type="text" id="total-dias-colheita" readonly placeholder="Automático" class="input-field input-readonly font-bold">
                             </div>
                             <div>
-                                <label for="dias-colhendo" class="label-style"><i class="ph ph-basket text-emerald-600"></i> Dias Colhendo</label>
+                                <label for="dias-colhendo" class="label-style">Dias Colhendo</label>
                                 <input type="number" id="dias-colhendo" placeholder="0" class="input-field">
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                    <button type="button" id="btn-clear" class="px-5 py-2.5 rounded-lg font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center gap-2">
-                        <i class="ph ph-eraser"></i> Limpar
+                <!-- Botões de Ação do Form -->
+                <div class="pt-5 border-t border-slate-200 flex justify-end gap-3">
+                    <button type="button" id="btn-clear" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 hover:shadow-sm transition-all flex items-center gap-2">
+                        <i class="ph-bold ph-eraser"></i> Limpar Dados
                     </button>
-                    <button type="submit" id="btn-save" class="px-6 py-2.5 rounded-lg font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition-all flex items-center gap-2">
-                        <i class="ph ph-floppy-disk text-lg"></i> <span id="btn-save-text">Salvar Registro</span>
+                    <button type="submit" id="btn-save" class="px-7 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                        <i class="ph-bold ph-floppy-disk text-lg"></i> <span id="btn-save-text">Salvar Lote</span>
                     </button>
                 </div>
             </form>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden mt-8">
-            <div class="bg-slate-800 p-4 flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
-                    <i class="ph ph-list-dashes text-emerald-400 text-xl"></i>
-                    Histórico de Lotes
-                </h2>
-                <span class="text-xs text-slate-300 font-medium bg-slate-700 px-3 py-1 rounded-full" id="total-records">0 registros</span>
+        <!-- Dashboard de Gráficos (LADO A LADO) -->
+        <div id="charts-wrapper" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 pb-4">
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                        <div class="bg-blue-100 text-blue-600 p-1.5 rounded-lg"><i class="ph-bold ph-chart-line-up"></i></div>
+                        Análise Comparativa
+                    </h3>
+                    <p class="text-sm text-slate-500 font-medium ml-10">Métricas consolidadas de desempenho da safra.</p>
+                </div>
+                <!-- Botões para exportar o Relatório Geral Único em 1280x720 -->
+                <div class="flex items-center gap-2 mt-4 md:mt-0">
+                    <button onclick="exportComprehensiveReport('jpeg')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <i class="ph-bold ph-image text-base"></i> Baixar JPEG
+                    </button>
+                    <button onclick="exportComprehensiveReport('pdf')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <i class="ph-bold ph-file-pdf text-base"></i> Baixar PDF
+                    </button>
+                </div>
             </div>
             
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-slate-50 text-slate-600 uppercase font-medium border-b border-slate-200">
-                        <tr>
-                            <th class="px-4 py-3">Bloco</th>
-                            <th class="px-4 py-3">Ciclo</th>
-                            <th class="px-4 py-3">Mudas/Transp.</th>
-                            <th class="px-4 py-3">Germinação</th>
-                            <th class="px-4 py-3">Mortalidade</th>
-                            <th class="px-4 py-3 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-table-body" class="divide-y divide-slate-100">
-                        <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-slate-500">
-                                Nenhum registro salvo ainda. Preencha o formulário e clique em Salvar.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Gráficos Alinhados na mesma linha no Desktop -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
+                <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-200 shadow-sm h-[320px] flex flex-col justify-between">
+                    <div class="h-[270px] w-full"><canvas id="chart-germinacao"></canvas></div>
+                </div>
+                <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-200 shadow-sm h-[320px] flex flex-col justify-between">
+                    <div class="h-[270px] w-full"><canvas id="chart-mortalidade"></canvas></div>
+                </div>
+                <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-200 shadow-sm h-[320px] flex flex-col justify-between">
+                    <div class="h-[270px] w-full"><canvas id="chart-irrigacao"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Histórico: Estilo Dashboard Elegante -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+                        <div class="bg-amber-100 text-amber-600 p-1.5 rounded-lg"><i class="ph-fill ph-folders"></i></div>
+                        Histórico de Lotes
+                    </h2>
+                    <span class="text-xs font-bold bg-slate-800 text-white px-3 py-1.5 rounded-full shadow-sm" id="total-records">0 lotes</span>
+                </div>
+            </div>
+
+            <!-- Grid de Lotes Refatorado em Cards Premium -->
+            <div id="history-grid" class="grid grid-cols-1 gap-5">
+                <!-- Inserido dinamicamente via JS -->
             </div>
         </div>
     </main>
 
-    <div id="pdf-container" class="hidden">
-        <div id="pdf-content" class="p-8 bg-white text-black max-w-[800px] mx-auto" style="font-family: 'Inter', sans-serif;">
-            <!-- Cabeçalho PDF -->
-            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #10b981; padding-bottom: 20px; margin-bottom: 20px;">
-                <img src="https://i.imgur.com/wEozr34.png" alt="Logo" style="height: 60px;">
-                <div style="text-align: right;">
-                    <h1 style="font-size: 24px; font-weight: 700; margin: 0; color: #064e3b;">Registro TSV Master</h1>
-                    <p style="margin: 5px 0 0 0; color: #047857; font-weight: 500;">Fazenda Oásis</p>
+    <!-- TEMPLATE DE EXPORTAÇÃO EXCLUSIVO 1280x720 HD -->
+    <div id="export-comp-container" class="export-container">
+        <div id="export-comp-page" class="export-page-hd">
+            <!-- Linha 1: Cabeçalho -->
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #059669; padding-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="background-color: #ecfdf5; padding: 10px; border-radius: 12px;">
+                        <img src="https://i.imgur.com/wEozr34.png" alt="Logo" style="height: 50px;">
+                    </div>
+                    <div>
+                        <h1 style="font-size: 24px; font-weight: 800; margin: 0; color: #0f172a; letter-spacing: -0.025em;">Relatório Consolidado de Safra</h1>
+                        <p style="margin: 4px 0 0 0; color: #059669; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">TSV Master • Fazenda Oásis</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-                <h2 style="font-size: 18px; margin: 0 0 10px 0; color: #0f766e; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Informações do Bloco</h2>
-                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                    <tr>
-                        <td style="padding: 4px 0; font-weight: 600; width: 30%;">Identificação:</td>
-                        <td style="padding: 4px 0;" id="pdf-bloco"></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 4px 0; font-weight: 600;">Ciclo:</td>
-                        <td style="padding: 4px 0;" id="pdf-ciclo"></td>
-                    </tr>
-                </table>
+                <div style="text-align: right; font-size: 12px; color: #64748b; background-color: #f1f5f9; padding: 10px 15px; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 800; color: #1e293b; text-transform: uppercase;">Emissão Oficial</p>
+                    <p style="margin: 4px 0 0 0;" id="exp-comp-data"></p>
+                </div>
             </div>
 
-            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;">
-                    <h3 style="font-size: 16px; margin: 0 0 10px 0; color: #0f766e; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Plantio</h3>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                        <tr><td style="padding: 3px 0;">Bandejas:</td><td style="text-align: right; font-weight: 600;" id="pdf-bandejas"></td></tr>
-                        <tr><td style="padding: 3px 0;">Total Mudas:</td><td style="text-align: right; font-weight: 600;" id="pdf-mudas"></td></tr>
-                        <tr><td style="padding: 3px 0;">Transplantado:</td><td style="text-align: right; font-weight: 600;" id="pdf-transp"></td></tr>
-                        <tr><td style="padding: 3px 0;">Falhas Germinação:</td><td style="text-align: right; font-weight: 600;" id="pdf-falhas"></td></tr>
-                        <tr><td style="padding: 3px 0;">% Germinada:</td><td style="text-align: right; font-weight: 600; color:#10b981;" id="pdf-pgerm"></td></tr>
-                        <tr><td style="padding: 3px 0;">% Falhas:</td><td style="text-align: right; font-weight: 600; color:#ef4444;" id="pdf-pfalhas"></td></tr>
-                    </table>
-                </div>
-                
-                <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;">
-                    <h3 style="font-size: 16px; margin: 0 0 10px 0; color: #0f766e; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Desenvolvimento</h3>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                        <tr><td style="padding: 3px 0;">Plantas Mortas:</td><td style="text-align: right; font-weight: 600;" id="pdf-mortas"></td></tr>
-                        <tr><td style="padding: 3px 0;">% Mortalidade:</td><td style="text-align: right; font-weight: 600; color:#ef4444;" id="pdf-pmort"></td></tr>
-                        <tr><td style="padding: 3px 0;">Cabeças Peq.:</td><td style="text-align: right; font-weight: 600;" id="pdf-cpeq"></td></tr>
-                        <tr><td style="padding: 3px 0;">Cabeças Def.:</td><td style="text-align: right; font-weight: 600;" id="pdf-cdef"></td></tr>
-                    </table>
-                    
-                    <h3 style="font-size: 16px; margin: 15px 0 10px 0; color: #0ea5e9; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Irrigação</h3>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                        <tr><td style="padding: 3px 0;">Volume (L):</td><td style="text-align: right; font-weight: 600;" id="pdf-vol"></td></tr>
-                        <tr><td style="padding: 3px 0;">Litros/Planta:</td><td style="text-align: right; font-weight: 600; color:#0284c7;" id="pdf-lplanta"></td></tr>
+            <!-- Linha 2: Resumo Compacto das Métricas -->
+            <div style="margin-top: 15px; flex-grow: 1;">
+                <h2 style="font-size: 14px; font-weight: 800; color: #064e3b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <span style="display:inline-block; width:4px; height:14px; background-color:#059669; border-radius:2px;"></span> 1. Histórico de Lotes
+                </h2>
+                <div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                        <thead style="background-color: #f8fafc; color: #475569; font-weight: bold; border-bottom: 2px solid #cbd5e1;">
+                            <tr>
+                                <th style="padding: 8px 12px; border-right: 1px solid #e2e8f0; text-transform: uppercase;">Bloco / Ciclo</th>
+                                <th style="padding: 8px 12px; border-right: 1px solid #e2e8f0; text-transform: uppercase;">Mudas / Transp.</th>
+                                <th style="padding: 8px 12px; border-right: 1px solid #e2e8f0; text-transform: uppercase;">Germinação / Falhas (%)</th>
+                                <th style="padding: 8px 12px; border-right: 1px solid #e2e8f0; text-transform: uppercase;">Mortalidade (%)</th>
+                                <th style="padding: 8px 12px; text-transform: uppercase;">Volume / L por Planta</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exp-comp-tbody" style="color: #334155;">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;">
-                <h3 style="font-size: 16px; margin: 0 0 10px 0; color: #0f766e; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Cronograma</h3>
-                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                    <tr>
-                        <td style="padding: 3px 0; width: 25%;">Transplantio:</td><td style="font-weight: 600; width: 25%;" id="pdf-dtrans"></td>
-                        <td style="padding: 3px 0; width: 25%;">Prev. Colheita:</td><td style="font-weight: 600; width: 25%;" id="pdf-dcol"></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 3px 0;">Tempo Prod.:</td><td style="font-weight: 600;" id="pdf-tprod"></td>
-                        <td style="padding: 3px 0;">Dias p/ Colheita:</td><td style="font-weight: 600; color:#0284c7;" id="pdf-dpcol"></td>
-                    </tr>
-                </table>
+            <!-- Linha 3: Análise Gráfica Unificada -->
+            <div style="margin-top: 20px;">
+                <h2 style="font-size: 14px; font-weight: 800; color: #064e3b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <span style="display:inline-block; width:4px; height:14px; background-color:#2563eb; border-radius:2px;"></span> 2. Análise Gráfica
+                </h2>
+                <div style="display: flex; gap: 15px; width: 100%; height: 260px;">
+                    <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 12px; padding: 15px; background: #ffffff; display: flex; align-items: center; justify-content: center; height: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <img id="exp-img-chart1" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                    <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 12px; padding: 15px; background: #ffffff; display: flex; align-items: center; justify-content: center; height: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <img id="exp-img-chart2" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                    <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 12px; padding: 15px; background: #ffffff; display: flex; align-items: center; justify-content: center; height: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <img id="exp-img-chart3" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                </div>
             </div>
 
-            <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                Relatório gerado pelo sistema TSV Master - <span id="pdf-gerado-em"></span>
+            <!-- Linha 4: Rodapé -->
+            <div style="border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #94a3b8; font-weight: 600;">
+                <span>Sistema TSV Master • Gestão Inteligente</span>
+                <span>Documento processado às <span id="exp-hora-emissao"></span></span>
             </div>
         </div>
     </div>
 
     <script>
+        Chart.register(ChartDataLabels);
+        
+        let chartInst1 = null;
+        let chartInst2 = null;
+        let chartInst3 = null;
+
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // Exibir data atual no header
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR', dateOptions);
 
-            // Estado da Aplicação (Memória Local)
             let records = JSON.parse(localStorage.getItem('tsv_records')) || [];
             let editingId = null;
 
-            // Referências aos inputs
             const els = {
                 form: document.getElementById('tsv-form'),
                 bloco: document.getElementById('bloco'),
@@ -407,11 +475,11 @@
                 btnSaveText: document.getElementById('btn-save-text'),
                 btnCancelEdit: document.getElementById('btn-cancel-edit'),
                 formTitle: document.getElementById('form-title'),
-                tbody: document.getElementById('history-table-body'),
-                totalRecords: document.getElementById('total-records')
+                historyGrid: document.getElementById('history-grid'),
+                totalRecords: document.getElementById('total-records'),
+                chartsWrapper: document.getElementById('charts-wrapper')
             };
 
-            // Toggle campo "Outro"
             els.bloco.addEventListener('change', (e) => {
                 if (e.target.value === 'outro') {
                     els.blocoOutroContainer.classList.remove('hidden');
@@ -424,7 +492,6 @@
                 }
             });
 
-            // Funções utilitárias
             const getNum = (input) => { const v = parseFloat(input.value); return isNaN(v) ? 0 : v; };
             const formatPerc = (v) => (!isFinite(v) || isNaN(v)) ? "0.00%" : v.toFixed(2) + "%";
             const formatDateBR = (dStr) => {
@@ -432,17 +499,17 @@
                 const [y, m, d] = dStr.split('-');
                 return `${d}/${m}/${y}`;
             };
+            
+            // CORREÇÃO CRUCIAL: Remove os textos e formata apenas os números
+            const parsePercNumber = (str) => parseFloat(String(str).replace(/[^\d.-]/g, '')) || 0;
 
-            // Motor de Cálculo Principal
             const calculateAll = () => {
-                // 1. Sementeira
                 const bandejas = getNum(els.bandejas);
                 const mudas = bandejas * 200;
                 els.mudas.value = mudas > 0 ? mudas : '';
 
                 const transplantado = getNum(els.transplantado);
                 
-                // Falhas automáticas: Mudas - Transplantadas
                 let falhas = 0;
                 if(mudas > 0 && els.transplantado.value !== "") {
                     falhas = Math.max(0, mudas - transplantado);
@@ -451,16 +518,16 @@
                     els.falhas.value = '';
                 }
 
-                // Porcentagens de Germinação
                 let pGerm = 0, pFalhas = 0;
                 if (mudas > 0) {
                     pGerm = (transplantado / mudas) * 100;
                     pFalhas = (falhas / mudas) * 100;
                 }
+                
+                // Removemos o texto 'Germinação:' e 'Falhas:' daqui para os gráficos lerem os números facilmente
                 els.percGerminada.value = formatPerc(pGerm);
                 els.percFalhas.value = formatPerc(pFalhas);
 
-                // 2. Mortalidade e Cabeças
                 const mortas = getNum(els.mortas);
                 els.percMort.value = formatPerc(transplantado > 0 ? (mortas / transplantado) * 100 : 0);
 
@@ -469,7 +536,6 @@
                 els.percCabPeq.value = formatPerc(transplantado > 0 ? (cPeq / transplantado) * 100 : 0);
                 els.percCabDef.value = formatPerc(transplantado > 0 ? (cDef / transplantado) * 100 : 0);
 
-                // 3. Irrigação
                 const vol = getNum(els.volIrrigacao);
                 if(vol > 0 && transplantado > 0) {
                     els.litrosPlanta.value = (vol / transplantado).toFixed(2) + " L";
@@ -477,7 +543,6 @@
                     els.litrosPlanta.value = "";
                 }
 
-                // 4. Datas
                 if (els.dTrans.value && els.dColheita.value) {
                     const dt1 = new Date(els.dTrans.value);
                     const dt2 = new Date(els.dColheita.value);
@@ -488,71 +553,268 @@
                 }
             };
 
-            // Escutar eventos de digitação
             const inputsToListen = [els.bandejas, els.transplantado, els.mortas, els.cabPeq, els.cabDef, els.volIrrigacao, els.dTrans, els.dColheita];
             inputsToListen.forEach(inp => inp.addEventListener('input', calculateAll));
 
-            // Função para limpar form e resetar estado
             const resetForm = () => {
                 els.form.reset();
-                els.bloco.dispatchEvent(new Event('change')); // esconder "Outro"
+                els.bloco.dispatchEvent(new Event('change'));
                 calculateAll();
                 editingId = null;
-                els.btnSaveText.textContent = "Salvar Registro";
+                els.btnSaveText.textContent = "Salvar Lote";
                 els.btnCancelEdit.classList.add('hidden');
-                els.formTitle.innerHTML = '<i class="ph ph-plus-circle text-emerald-600 text-xl"></i> Novo Registro de Bloco';
+                els.formTitle.innerHTML = '<div class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg"><i class="ph-bold ph-plus"></i></div> Novo Registro de Bloco';
             };
 
             document.getElementById('btn-clear').addEventListener('click', resetForm);
             els.btnCancelEdit.addEventListener('click', resetForm);
 
-            // ==========================================
-            // LÓGICA DE CRUD E HISTÓRICO
-            // ==========================================
-
+            // Renderização do Histórico em formato de Mini-Dashboards Premium
             const renderHistory = () => {
-                els.tbody.innerHTML = '';
-                els.totalRecords.textContent = `${records.length} registro${records.length !== 1 ? 's' : ''}`;
+                els.historyGrid.innerHTML = '';
+                els.totalRecords.textContent = `${records.length} lote${records.length !== 1 ? 's' : ''}`;
                 
                 if (records.length === 0) {
-                    els.tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500">Nenhum registro salvo ainda.</td></tr>`;
+                    els.historyGrid.innerHTML = `
+                        <div class="bg-white p-16 text-center rounded-2xl border border-dashed border-slate-300 text-slate-500 shadow-sm">
+                            <i class="ph-fill ph-tray text-5xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-lg text-slate-600">Nenhum bloco registrado</p>
+                            <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Preencha os dados no formulário acima para iniciar o monitoramento de safra.</p>
+                        </div>
+                    `;
+                    els.chartsWrapper.classList.add('hidden');
                     return;
                 }
 
-                // Ordenar alfabeticamente pelo nome do bloco
                 const sortedRecords = [...records].sort((a, b) => a.nomeBloco.localeCompare(b.nomeBloco));
 
                 sortedRecords.forEach(rec => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition-colors";
-                    tr.innerHTML = `
-                        <td class="px-4 py-3 font-medium text-emerald-700">Bloco ${rec.nomeBloco}</td>
-                        <td class="px-4 py-3 text-slate-600">${rec.ciclo || '-'}</td>
-                        <td class="px-4 py-3 text-slate-600">${rec.mudas} / ${rec.transplantado}</td>
-                        <td class="px-4 py-3 text-emerald-600 font-medium">${rec.percGerminada}</td>
-                        <td class="px-4 py-3 ${parseFloat(rec.percMort) > 5 ? 'text-red-500' : 'text-slate-600'}">${rec.percMort}</td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="editRecord('${rec.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded" title="Editar">
-                                    <i class="ph ph-pencil-simple text-lg"></i>
-                                </button>
-                                <button onclick="generatePDF('${rec.id}')" class="p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 rounded" title="Baixar Relatório PDF">
-                                    <i class="ph ph-file-pdf text-lg"></i>
-                                </button>
-                                <button onclick="deleteRecord('${rec.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Apagar">
-                                    <i class="ph ph-trash text-lg"></i>
-                                </button>
+                    const rawPercGerm = parsePercNumber(rec.percGerminada);
+                    const rawPercMort = parsePercNumber(rec.percMort);
+                    
+                    // Definir cor da borda de status com base na mortalidade
+                    const statusColor = rawPercMort > 5 ? 'bg-rose-500' : 'bg-emerald-500';
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col relative group";
+                    card.innerHTML = `
+                        <!-- Tarja Lateral de Status -->
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor} opacity-90"></div>
+                        
+                        <div class="p-5 pl-7 flex flex-col gap-4">
+                            <!-- Cabeçalho do Card -->
+                            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                                <div>
+                                    <h3 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+                                        Bloco ${rec.nomeBloco}
+                                    </h3>
+                                    <p class="text-xs font-semibold text-slate-500 mt-0.5">Ciclo: <span class="text-slate-700">${rec.ciclo || 'N/A'}</span></p>
+                                </div>
+                                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="editRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all flex items-center gap-1">
+                                        <i class="ph-bold ph-pencil-simple"></i> Editar
+                                    </button>
+                                    <button onclick="deleteRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all flex items-center gap-1">
+                                        <i class="ph-bold ph-trash"></i> Excluir
+                                    </button>
+                                </div>
                             </div>
-                        </td>
+
+                            <!-- Caixas de Dados Modulares -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <!-- Modulo 1 -->
+                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 hover:border-slate-200 transition-colors">
+                                    <div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Mudas / Transp.</div>
+                                    <div class="text-lg font-extrabold text-slate-800">${rec.mudas || 0} <span class="text-sm font-medium text-slate-400">/ ${rec.transplantado || 0}</span></div>
+                                    <div class="text-[10px] text-slate-400 font-medium mt-1">${rec.bandejas || 0} bandejas</div>
+                                </div>
+                                
+                                <!-- Modulo 2: Barra Germinação -->
+                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 hover:border-slate-200 transition-colors">
+                                    <div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Taxa de Germinação</div>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <span class="text-lg font-extrabold text-emerald-600">${rawPercGerm.toFixed(1)}%</span>
+                                        <span class="text-[10px] text-amber-500 font-bold">(${rec.falhas || 0} falhas)</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="bg-emerald-500 h-1.5 rounded-full" style="width: ${rawPercGerm}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Modulo 3: Barra Mortalidade -->
+                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 hover:border-slate-200 transition-colors">
+                                    <div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Taxa de Mortalidade</div>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <span class="text-lg font-extrabold ${rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700'}">${rawPercMort.toFixed(1)}%</span>
+                                        <span class="text-[10px] text-rose-400 font-bold">(${rec.mortas || 0} mortas)</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                                        <div class="${rawPercMort > 5 ? 'bg-rose-500' : 'bg-slate-400'} h-1.5 rounded-full transition-all" style="width: ${rawPercMort > 100 ? 100 : rawPercMort}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Modulo 4: Irrigação / Datas -->
+                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 hover:border-slate-200 transition-colors">
+                                    <div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Volume Hídrico</div>
+                                    <div class="text-lg font-extrabold text-blue-600">${rec.volIrrigacao || 0} L</div>
+                                    <div class="text-[10px] text-blue-400 font-bold mt-1">${rec.litrosPlanta || '0.00 L'} por planta</div>
+                                </div>
+                            </div>
+                        </div>
                     `;
-                    els.tbody.appendChild(tr);
+                    els.historyGrid.appendChild(card);
+                });
+
+                if (records.length > 0) {
+                    els.chartsWrapper.classList.remove('hidden');
+                    updateCharts(sortedRecords);
+                }
+            };
+
+            const createGradient = (ctx, colorStart, colorEnd) => {
+                const grad = ctx.createLinearGradient(0, 0, 0, 250);
+                grad.addColorStop(0, colorStart);
+                grad.addColorStop(1, colorEnd);
+                return grad;
+            };
+
+            const updateCharts = (data) => {
+                const labels = data.map(d => `Bl. ${d.nomeBloco}`);
+                
+                const datalabelsConfig = {
+                    color: '#334155',
+                    font: { weight: '800', size: 10, family: 'Inter' },
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 2,
+                    formatter: (value) => value > 0 ? value.toFixed(1) + '%' : ''
+                };
+
+                const commonOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { font: { family: 'Inter', size: 10, weight: '700' }, boxWidth: 12, padding: 15 } },
+                        datalabels: datalabelsConfig,
+                        tooltip: { backgroundColor: '#1e293b', titleFont: { family: 'Inter', size: 13 }, bodyFont: { family: 'Inter', size: 12 }, padding: 10, cornerRadius: 8 }
+                    },
+                    scales: {
+                        y: { grid: { color: '#e2e8f0', drawBorder: false }, ticks: { font: { family: 'Inter', size: 10, weight: '500' }, color: '#64748b' } },
+                        x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11, weight: '700' }, color: '#475569' } }
+                    },
+                    layout: { padding: { top: 20 } }
+                };
+
+                // GRÁFICO 1: GERMINAÇÃO VS FALHAS
+                const ctx1 = document.getElementById('chart-germinacao').getContext('2d');
+                if(chartInst1) chartInst1.destroy();
+                chartInst1 = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Germinado (%)',
+                                data: data.map(d => parsePercNumber(d.percGerminada)),
+                                backgroundColor: createGradient(ctx1, '#10b981', '#047857'),
+                                borderRadius: 6,
+                                barPercentage: 0.8
+                            },
+                            {
+                                label: 'Falhas (%)',
+                                data: data.map(d => parsePercNumber(d.percFalhas)),
+                                backgroundColor: createGradient(ctx1, '#f59e0b', '#d97706'),
+                                borderRadius: 6,
+                                barPercentage: 0.8
+                            }
+                        ]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            ...commonOptions.plugins,
+                            title: { display: true, text: 'GERMINAÇÃO VS FALHAS', font: { family: 'Inter', size: 12, weight: '900' }, color: '#0f172a', padding: { bottom: 15 } }
+                        },
+                        scales: { y: { ...commonOptions.scales.y, max: 115 } }
+                    }
+                });
+
+                // GRÁFICO 2: MORTALIDADE
+                const ctx2 = document.getElementById('chart-mortalidade').getContext('2d');
+                if(chartInst2) chartInst2.destroy();
+                chartInst2 = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Mortalidade de Campo (%)',
+                            data: data.map(d => parsePercNumber(d.percMort)),
+                            backgroundColor: createGradient(ctx2, '#f43f5e', '#be123c'),
+                            borderRadius: 6,
+                            barPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            ...commonOptions.plugins,
+                            title: { display: true, text: 'TAXA DE MORTALIDADE', font: { family: 'Inter', size: 12, weight: '900' }, color: '#0f172a', padding: { bottom: 15 } }
+                        },
+                        scales: { y: { ...commonOptions.scales.y, max: 100 } }
+                    }
+                });
+
+                // GRÁFICO 3: IRRIGAÇÃO
+                const ctx3 = document.getElementById('chart-irrigacao').getContext('2d');
+                if(chartInst3) chartInst3.destroy();
+                chartInst3 = new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: 'Volume (L)',
+                                data: data.map(d => parseFloat(d.volIrrigacao) || 0),
+                                backgroundColor: createGradient(ctx3, '#3b82f6', '#1d4ed8'),
+                                borderRadius: 6,
+                                yAxisID: 'y',
+                                barPercentage: 0.6,
+                                datalabels: { formatter: (v) => v > 0 ? v.toFixed(0) + 'L' : '', color: '#1e40af' }
+                            },
+                            {
+                                type: 'line',
+                                label: 'L / Planta',
+                                data: data.map(d => parseFloat(d.litrosPlanta) || 0),
+                                borderColor: '#0f172a',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#0f172a',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                tension: 0.3,
+                                yAxisID: 'y1',
+                                datalabels: { align: 'top', anchor: 'end', formatter: (v) => v > 0 ? v.toFixed(1) : '', color: '#0f172a' }
+                            }
+                        ]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            ...commonOptions.plugins,
+                            title: { display: true, text: 'VOLUME HÍDRICO VS POR PLANTA', font: { family: 'Inter', size: 12, weight: '900' }, color: '#0f172a', padding: { bottom: 15 } }
+                        },
+                        scales: {
+                            y: { type: 'linear', display: true, position: 'left', grid: { color: '#e2e8f0' }, ticks: { font: { size: 10 } } },
+                            y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11, weight: '700' }, color: '#475569' } }
+                        }
+                    }
                 });
             };
 
-            // Salvar (Criar ou Atualizar)
             els.form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                calculateAll(); // Garantir que está tudo calculado
+                calculateAll(); 
 
                 const nomeBloco = els.bloco.value === 'outro' ? els.blocoOutro.value : els.bloco.value;
                 
@@ -599,9 +861,7 @@
                 renderHistory();
             });
 
-            // Expor funções para os botões inline na tabela
             window.deleteRecord = (id) => {
-                // Ao invés de alert/confirm (restrição), apagamos direto com feedback simples
                 records = records.filter(r => r.id !== id);
                 localStorage.setItem('tsv_records', JSON.stringify(records));
                 renderHistory();
@@ -613,8 +873,8 @@
                 if(!rec) return;
 
                 editingId = id;
-                els.formTitle.innerHTML = `<i class="ph ph-pencil text-blue-500 text-xl"></i> Editando Bloco ${rec.nomeBloco}`;
-                els.btnSaveText.textContent = "Atualizar Registro";
+                els.formTitle.innerHTML = `<div class="bg-blue-100 text-blue-600 p-1.5 rounded-lg"><i class="ph-bold ph-pencil-simple"></i></div> Editando Bloco ${rec.nomeBloco}`;
+                els.btnSaveText.textContent = "Atualizar Lote";
                 els.btnCancelEdit.classList.remove('hidden');
 
                 els.bloco.value = rec.blocoValue;
@@ -641,59 +901,86 @@
                 els.form.scrollIntoView({ behavior: 'smooth' });
             };
 
-            // ==========================================
-            // GERAÇÃO DE PDF PROFISSIONAL (HTML2PDF)
-            // ==========================================
-            window.generatePDF = (id) => {
-                const rec = records.find(r => r.id === id);
-                if(!rec) return;
-
-                // Preencher o template HTML oculto com os dados
-                document.getElementById('pdf-bloco').textContent = "Bloco " + rec.nomeBloco;
-                document.getElementById('pdf-ciclo').textContent = rec.ciclo || "Não informado";
+            const exportElementHD = async (elementId, filename, format) => {
+                const el = document.getElementById(elementId);
+                el.style.left = '0';
+                el.style.zIndex = '99999';
                 
-                document.getElementById('pdf-bandejas').textContent = rec.bandejas;
-                document.getElementById('pdf-mudas').textContent = rec.mudas;
-                document.getElementById('pdf-transp').textContent = rec.transplantado;
-                document.getElementById('pdf-falhas').textContent = rec.falhas;
-                document.getElementById('pdf-pgerm').textContent = rec.percGerminada;
-                document.getElementById('pdf-pfalhas').textContent = rec.percFalhas;
-                
-                document.getElementById('pdf-mortas').textContent = rec.mortas || 0;
-                document.getElementById('pdf-pmort').textContent = rec.percMort;
-                document.getElementById('pdf-cpeq').textContent = (rec.cabPeq || 0) + " (" + rec.percCabPeq + ")";
-                document.getElementById('pdf-cdef').textContent = (rec.cabDef || 0) + " (" + rec.percCabDef + ")";
-                
-                document.getElementById('pdf-vol').textContent = (rec.volIrrigacao || 0) + " L";
-                document.getElementById('pdf-lplanta').textContent = rec.litrosPlanta || "0.00 L";
-                
-                document.getElementById('pdf-dtrans').textContent = formatDateBR(rec.dTrans);
-                document.getElementById('pdf-dcol').textContent = formatDateBR(rec.dColheita);
-                document.getElementById('pdf-tprod').textContent = (rec.tempoProd || 0) + " dias";
-                document.getElementById('pdf-dpcol').textContent = rec.diasColheita || "-";
-                
-                const now = new Date();
-                document.getElementById('pdf-gerado-em').textContent = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR');
-
-                // Configurações do html2pdf
-                const element = document.getElementById('pdf-content');
-                const opt = {
-                    margin:       10,
-                    filename:     `Relatorio_Bloco_${rec.nomeBloco}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                // Mostrar o container rapidamente para renderizar, gerar e depois esconder
-                document.getElementById('pdf-container').classList.remove('hidden');
-                
-                html2pdf().set(opt).from(element).save().then(() => {
-                    document.getElementById('pdf-container').classList.add('hidden');
-                });
+                try {
+                    const dataUrl = await htmlToImage.toJpeg(el, { quality: 1.0, backgroundColor: '#ffffff', pixelRatio: 2 });
+                    
+                    if (format === 'jpeg') {
+                        const link = document.createElement('a');
+                        link.download = `${filename}.jpeg`;
+                        link.href = dataUrl;
+                        link.click();
+                    } 
+                    else if (format === 'pdf') {
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({ orientation: 'l', unit: 'px', format: [1280, 720] });
+                        pdf.addImage(dataUrl, 'JPEG', 0, 0, 1280, 720);
+                        pdf.save(`${filename}.pdf`);
+                    }
+                } catch(e) {
+                    console.error("Falha ao processar exportação de alta definição:", e);
+                } finally {
+                    el.style.left = '-9999px';
+                    el.style.zIndex = '-1000';
+                }
             };
 
-            // Iniciar renderização inicial
+            window.exportComprehensiveReport = (format) => {
+                if(records.length === 0) return;
+
+                const tbody = document.getElementById('exp-comp-tbody');
+                tbody.innerHTML = '';
+                
+                const sortedRecords = [...records].sort((a, b) => a.nomeBloco.localeCompare(b.nomeBloco));
+                
+                sortedRecords.forEach(rec => {
+                    const rawPercGerm = parsePercNumber(rec.percGerminada);
+                    const rawPercFalhas = parsePercNumber(rec.percFalhas);
+                    
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid #e2e8f0';
+                    tr.innerHTML = `
+                        <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0;">
+                            <div style="font-weight: 800; color: #0f172a; font-size: 13px;">Bloco ${rec.nomeBloco}</div>
+                            <div style="font-size: 10px; color: #64748b; font-weight: 600;">${rec.ciclo || 'N/A'}</div>
+                        </td>
+                        <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0;">
+                            <div style="font-weight: 700;">${rec.mudas || 0}</div>
+                            <div style="font-size: 11px; color: #64748b;">/ ${rec.transplantado || 0} transp.</div>
+                        </td>
+                        <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0; font-weight: 700;">
+                            <span style="color: #10b981;">${rawPercGerm.toFixed(1)}%</span> | 
+                            <span style="color: #d97706;">${rawPercFalhas.toFixed(1)}%</span>
+                        </td>
+                        <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0;">
+                            <div style="font-weight: 800; color: ${parsePercNumber(rec.percMort) > 5 ? '#e11d48' : '#334155'};">${rec.percMort}</div>
+                        </td>
+                        <td style="padding: 10px 12px;">
+                            <div style="font-weight: 700; color: #2563eb;">${rec.volIrrigacao || 0} L</div>
+                            <div style="font-size: 11px; color: #64748b;">${rec.litrosPlanta || '0'} p/ planta</div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('exp-img-chart1').src = document.getElementById('chart-germinacao').toDataURL('image/png', 1.0);
+                document.getElementById('exp-img-chart2').src = document.getElementById('chart-mortalidade').toDataURL('image/png', 1.0);
+                document.getElementById('exp-img-chart3').src = document.getElementById('chart-irrigacao').toDataURL('image/png', 1.0);
+
+                const now = new Date();
+                const dataString = now.toLocaleDateString('pt-BR');
+                const horaString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                
+                document.getElementById('exp-comp-data').textContent = `${dataString} às ${horaString}`;
+                document.getElementById('exp-hora-emissao').textContent = `${dataString} às ${horaString}`;
+
+                exportElementHD('export-comp-page', 'Relatorio_Consolidado_TSV_Master', format);
+            };
+
             renderHistory();
         });
     </script>
