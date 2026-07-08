@@ -81,7 +81,7 @@
             letter-spacing: 0.05em;
         }
 
-        /* Container de exportação aprimorado para expansão horizontal automática */
+        /* Container de exportação aprimorado com largura flexível para acomodar as novas colunas */
         .export-container {
             position: absolute;
             left: -9999px;
@@ -91,10 +91,9 @@
         }
         
         .export-page-hd {
-            /* Largura mínima de 1280px, mas pode crescer dinamicamente via JS */
-            min-width: 1280px; 
+            min-width: 1750px; /* Aumentado para dar espaço ao "nowrap" */
             min-height: 720px;
-            padding: 40px;
+            padding: 50px;
             background: #ffffff;
             font-family: 'Inter', sans-serif;
             color: #1e293b;
@@ -111,7 +110,7 @@
 </head>
 <body class="text-slate-800 min-h-screen p-4 md:p-6 flex flex-col items-center">
 
-    <main class="w-full max-w-6xl space-y-8">
+    <main class="w-full max-w-7xl space-y-8">
         
         <!-- Cabeçalho Principal -->
         <header class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -229,7 +228,7 @@
                     </div>
                 </section>
 
-                <!-- Desenvolvimento, Perdas e Cronograma -->
+                <!-- Desenvolvimento e Cronograma -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
                         <h3 class="section-title"><i class="ph-fill ph-trend-down text-rose-500"></i> Desenvolvimento e Perdas</h3>
@@ -271,6 +270,29 @@
                         </div>
                     </section>
                 </div>
+
+                <!-- Nova Seção: Qualidade da Colheita -->
+                <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="section-title"><i class="ph-fill ph-warning-circle text-purple-500"></i> Qualidade da Colheita (Anomalias)</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <label for="cabecas-pequenas" class="label-style text-purple-600">Cabeças Pequenas</label>
+                            <input type="number" id="cabecas-pequenas" placeholder="0" class="input-field border-purple-200 focus:border-purple-500 focus:shadow-purple-100">
+                        </div>
+                        <div>
+                            <label for="perc-pequenas" class="label-style text-purple-600">% Peq. (Ref. Transplantio)</label>
+                            <input type="text" id="perc-pequenas" readonly placeholder="0,00%" class="input-field input-readonly text-purple-700 bg-purple-50 border-purple-100">
+                        </div>
+                        <div>
+                            <label for="cabecas-deformadas" class="label-style text-orange-600">Cabeças Deformadas</label>
+                            <input type="number" id="cabecas-deformadas" placeholder="0" class="input-field border-orange-200 focus:border-orange-500 focus:shadow-orange-100">
+                        </div>
+                        <div>
+                            <label for="perc-deformadas" class="label-style text-orange-600">% Def. (Ref. Transplantio)</label>
+                            <input type="text" id="perc-deformadas" readonly placeholder="0,00%" class="input-field input-readonly text-orange-700 bg-orange-50 border-orange-100">
+                        </div>
+                    </div>
+                </section>
 
                 <div class="pt-5 border-t border-slate-200 flex justify-end gap-3">
                     <button type="button" id="btn-clear" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all flex items-center gap-2">
@@ -321,6 +343,12 @@
                     <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-irrigacao"></canvas></div>
                     <div class="h-[320px] w-full relative"><canvas id="chart-irrigacao-pie"></canvas></div>
                 </div>
+                <div class="w-full h-px bg-slate-100"></div>
+                <!-- NOVO: ANOMALIAS (QUALIDADE) TELA -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-anomalias"></canvas></div>
+                    <div class="h-[320px] w-full relative"><canvas id="chart-anomalias-pie"></canvas></div>
+                </div>
             </div>
         </div>
 
@@ -368,14 +396,16 @@
                     <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; border: 2px solid #94a3b8;">
                         <thead style="background: #0f172a; color: #ffffff;">
                             <tr>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Bloco / Ciclo</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Mudas Prev.</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Transplant.</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Germinação</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Falhas</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Mortalidade</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">Volume (L)</th>
-                                <th style="padding: 12px 8px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; text-align: center;">L / Planta</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Bloco / Ciclo</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Transplant.</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Mortalidade</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">T. Prod.(dias)</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Dias P/Colh.</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Dias Colhendo</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Cab. Pequenas</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">% Pequenas</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Cab. Deform.</th>
+                                <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">% Deform.</th>
                             </tr>
                         </thead>
                         <tbody id="exp-comp-tbody" style="color: #334155;">
@@ -391,7 +421,6 @@
                     <span style="display:inline-block; width:6px; height:18px; background-color:#2563eb; border-radius:3px;"></span> 2. Análise Gráfica & Proporção por Bloco
                 </h2>
                 
-                <!-- Altura de 450px e proporção 60/40 para dar mais destaque ao gráfico de pizza -->
                 <div style="display: flex; gap: 30px; height: 450px; margin-bottom: 60px;">
                     <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart1-main"></canvas></div>
                     <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart1-pie"></canvas></div>
@@ -402,9 +431,15 @@
                     <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart2-pie"></canvas></div>
                 </div>
 
-                <div style="display: flex; gap: 30px; height: 450px;">
+                <div style="display: flex; gap: 30px; height: 450px; margin-bottom: 60px;">
                     <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart3-main"></canvas></div>
                     <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart3-pie"></canvas></div>
+                </div>
+
+                <!-- NOVO GRAFICO NA EXPORTACAO -->
+                <div style="display: flex; gap: 30px; height: 450px;">
+                    <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart4-main"></canvas></div>
+                    <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart4-pie"></canvas></div>
                 </div>
             </div>
 
@@ -419,8 +454,8 @@
     <script>
         Chart.register(ChartDataLabels);
         
-        let chartInst1 = null, chartInst2 = null, chartInst3 = null;
-        let chartInst1Pie = null, chartInst2Pie = null, chartInst3Pie = null;
+        let chartInst1 = null, chartInst2 = null, chartInst3 = null, chartInst4 = null;
+        let chartInst1Pie = null, chartInst2Pie = null, chartInst3Pie = null, chartInst4Pie = null;
         let exportChartsInstances = []; // Guarda as instâncias temporárias para a exportação
 
         const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4', '#8b5cf6', '#f43f5e', '#22c55e', '#eab308'];
@@ -458,6 +493,12 @@
                 diasColheita: document.getElementById('total-dias-colheita'),
                 diasColhendo: document.getElementById('dias-colhendo'),
 
+                // Novos elementos
+                cabPequenas: document.getElementById('cabecas-pequenas'),
+                percPequenas: document.getElementById('perc-pequenas'),
+                cabDeformadas: document.getElementById('cabecas-deformadas'),
+                percDeformadas: document.getElementById('perc-deformadas'),
+
                 btnSaveText: document.getElementById('btn-save-text'),
                 btnCancelEdit: document.getElementById('btn-cancel-edit'),
                 formTitle: document.getElementById('form-title'),
@@ -478,7 +519,6 @@
                 }
             });
 
-            // Funções Auxiliares
             const getNum = (input) => { 
                 if(!input) return 0;
                 const v = parseFloat(input.value); 
@@ -529,9 +569,15 @@
                 } else {
                     els.diasColheita.value = "";
                 }
+
+                // Cálculo Anomalias (Baseadas no total transplantado)
+                const cPequenas = getNum(els.cabPequenas);
+                const cDeformadas = getNum(els.cabDeformadas);
+                els.percPequenas.value = formatPerc(transplantado > 0 ? (cPequenas / transplantado) * 100 : 0);
+                els.percDeformadas.value = formatPerc(transplantado > 0 ? (cDeformadas / transplantado) * 100 : 0);
             };
 
-            const inputsToListen = [els.bandejas, els.transplantado, els.mortas, els.volIrrigacao, els.dTrans, els.dColheita];
+            const inputsToListen = [els.bandejas, els.transplantado, els.mortas, els.volIrrigacao, els.dTrans, els.dColheita, els.cabPequenas, els.cabDeformadas];
             inputsToListen.forEach(inp => {
                 if (inp) inp.addEventListener('input', calculateAll);
             });
@@ -588,11 +634,13 @@
                                     <button onclick="deleteRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-trash"></i> Excluir</button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Mudas / Transp.</div><div class="text-lg font-extrabold text-slate-800">${rec.mudas || 0} <span class="text-sm font-medium text-slate-400">/ ${rec.transplantado || 0}</span></div></div>
-                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Taxa de Germinação</div><div class="flex items-baseline gap-1.5"><span class="text-lg font-extrabold text-emerald-600">${formatVisPerc(rawPercGerm)}%</span><span class="text-[10px] text-amber-500 font-bold">(${rec.falhas || 0} falhas)</span></div><div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: ${rawPercGerm}%"></div></div></div>
-                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Taxa de Mortalidade</div><div class="flex items-baseline gap-1.5"><span class="text-lg font-extrabold ${rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700'}">${formatVisPerc(rawPercMort)}%</span><span class="text-[10px] text-rose-400 font-bold">(${rec.mortas || 0} mortas)</span></div><div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden"><div class="${rawPercMort > 5 ? 'bg-rose-500' : 'bg-slate-400'} h-1.5 rounded-full transition-all" style="width: ${rawPercMort > 100 ? 100 : rawPercMort}%"></div></div></div>
-                                <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Volume Hídrico</div><div class="text-lg font-extrabold text-blue-600">${rec.volIrrigacao || 0} L</div><div class="text-[10px] text-blue-400 font-bold mt-1">${rec.litrosPlanta || '0.00 L'} por planta</div></div>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Mudas / Transp.</div><div class="text-base font-extrabold text-slate-800">${rec.mudas || 0} <span class="text-xs font-medium text-slate-400">/ ${rec.transplantado || 0}</span></div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Mortalidade</div><div class="flex items-baseline gap-1"><span class="text-base font-extrabold ${rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700'}">${formatVisPerc(rawPercMort)}%</span></div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Volume Hídrico</div><div class="text-base font-extrabold text-blue-600">${rec.volIrrigacao || 0} L</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide">Dias p/ Colh.</div><div class="text-base font-extrabold text-slate-700">${rec.diasColheita || '-'}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="text-[10px] text-purple-500 font-bold mb-1 uppercase tracking-wide">Cab. Pequenas</div><div class="flex items-baseline gap-1"><span class="text-base font-extrabold text-purple-700">${rec.cabPequenas || 0}</span> <span class="text-[10px] text-purple-400 font-bold">(${rec.percPequenas || '0%'})</span></div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="text-[10px] text-orange-500 font-bold mb-1 uppercase tracking-wide">Cab. Deform.</div><div class="flex items-baseline gap-1"><span class="text-base font-extrabold text-orange-700">${rec.cabDeformadas || 0}</span> <span class="text-[10px] text-orange-400 font-bold">(${rec.percDeformadas || '0%'})</span></div></div>
                             </div>
                         </div>
                     `;
@@ -612,7 +660,6 @@
                 return grad;
             };
 
-            // Função que renderiza qualquer conjunto de gráficos (Usada para a tela e para a exportação)
             const buildChartConfig = (ctx, type, labels, dataConfigs, titleText, isExport = false) => {
                 const dlConfig = { color: '#334155', font: { weight: '800', size: isExport ? 12 : 10, family: 'Inter' }, anchor: 'end', align: 'top', offset: 2, formatter: (value) => value > 0 ? parseFloat(value.toFixed(2)).toLocaleString('pt-BR') + '%' : '' };
                 const pieDlConfig = { color: '#ffffff', font: { weight: '800', size: isExport ? 14 : 11, family: 'Inter' }, formatter: (value, context) => { const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); return total > 0 && value > 0 ? ((value / total) * 100).toFixed(1).replace('.', ',') + '%' : ''; } };
@@ -626,7 +673,7 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        animation: isExport ? false : true, // Sem animação na exportação para captura imediata
+                        animation: isExport ? false : true,
                         plugins: {
                             legend: { display: true, position: type === 'doughnut' ? 'right' : 'top', labels: { font: { family: 'Inter', size: isExport ? 13 : 10, weight: '700' }, padding: isExport ? 20 : 15 } },
                             title: { display: true, text: titleText, font: titleFont, color: '#0f172a', padding: { bottom: 15 } }
@@ -654,11 +701,17 @@
                 // 1. GERMINAÇÃO TELA
                 const ctx1 = document.getElementById('chart-germinacao').getContext('2d');
                 if(chartInst1) chartInst1.destroy();
+                const germData = data.map(d => parsePercNumber(d.percGerminada));
+                const falhaData = data.map(d => parsePercNumber(d.percFalhas));
+                const gradGerm = createGradient(ctx1, '#10b981', '#047857');
+                const gradFalha = createGradient(ctx1, '#f59e0b', '#d97706');
+                
                 chartInst1 = new Chart(ctx1, buildChartConfig(ctx1, 'bar', labels, [
-                    { label: 'Germinado (%)', data: data.map(d => parsePercNumber(d.percGerminada)), backgroundColor: createGradient(ctx1, '#10b981', '#047857'), borderRadius: 6, barPercentage: 0.8 },
-                    { label: 'Falhas (%)', data: data.map(d => parsePercNumber(d.percFalhas)), backgroundColor: createGradient(ctx1, '#f59e0b', '#d97706'), borderRadius: 6, barPercentage: 0.8 }
+                    { type: 'bar', label: 'Germinado (%)', data: germData, backgroundColor: gradGerm, borderRadius: 6, barPercentage: 0.8 },
+                    { type: 'line', label: 'Tendência Germ.', data: germData, borderColor: gradGerm, borderWidth: 3, tension: 0.4, pointBackgroundColor: '#10b981', pointRadius: 4, fill: false, datalabels: { display: false } },
+                    { type: 'bar', label: 'Falhas (%)', data: falhaData, backgroundColor: gradFalha, borderRadius: 6, barPercentage: 0.8 }
                 ], 'GERMINAÇÃO VS FALHAS (%)'));
-                chartInst1.options.scales.y.max = 115; chartInst1.update();
+                chartInst1.options.scales.y.suggestedMax = 90; chartInst1.update(); // Usando suggestedMax para autoescalonamento elegante
 
                 const ctx1p = document.getElementById('chart-germinacao-pie').getContext('2d');
                 if(chartInst1Pie) chartInst1Pie.destroy();
@@ -667,8 +720,14 @@
                 // 2. MORTALIDADE TELA
                 const ctx2 = document.getElementById('chart-mortalidade').getContext('2d');
                 if(chartInst2) chartInst2.destroy();
-                chartInst2 = new Chart(ctx2, buildChartConfig(ctx2, 'bar', labels, [{ label: 'Mortalidade (%)', data: data.map(d => parsePercNumber(d.percMort)), backgroundColor: createGradient(ctx2, '#f43f5e', '#be123c'), borderRadius: 6, barPercentage: 0.6 }], 'TAXA DE MORTALIDADE (%)'));
-                chartInst2.options.scales.y.max = 100; chartInst2.update();
+                const mortData = data.map(d => parsePercNumber(d.percMort));
+                const gradMort = createGradient(ctx2, '#f43f5e', '#be123c');
+                
+                chartInst2 = new Chart(ctx2, buildChartConfig(ctx2, 'bar', labels, [
+                    { type: 'bar', label: 'Mortalidade (%)', data: mortData, backgroundColor: gradMort, borderRadius: 6, barPercentage: 0.6 },
+                    { type: 'line', label: 'Tendência Mort.', data: mortData, borderColor: gradMort, borderWidth: 3, tension: 0.4, pointBackgroundColor: '#f43f5e', pointRadius: 4, fill: false, datalabels: { display: false } }
+                ], 'TAXA DE MORTALIDADE (%)'));
+                chartInst2.options.scales.y.suggestedMax = 5; chartInst2.update(); // Autoescala inteligente para destacar valores pequenos
 
                 const ctx2p = document.getElementById('chart-mortalidade-pie').getContext('2d');
                 if(chartInst2Pie) chartInst2Pie.destroy();
@@ -677,9 +736,12 @@
                 // 3. IRRIGAÇÃO TELA
                 const ctx3 = document.getElementById('chart-irrigacao').getContext('2d');
                 if(chartInst3) chartInst3.destroy();
+                const gradIrrig = createGradient(ctx3, '#3b82f6', '#1d4ed8');
+                const gradLinhaIrrig = createGradient(ctx3, '#0f172a', '#334155');
+                
                 const configIrrigacao = buildChartConfig(ctx3, 'bar', labels, [
-                    { type: 'bar', label: 'Volume (L)', data: data.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: createGradient(ctx3, '#3b82f6', '#1d4ed8'), borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
-                    { type: 'line', label: 'L / Planta', data: data.map(d => parseFloat(d.litrosPlanta) || 0), borderColor: '#0f172a', borderWidth: 3, pointBackgroundColor: '#0f172a', pointRadius: 4, tension: 0.3, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 8, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 4, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
+                    { type: 'bar', label: 'Volume (L)', data: data.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: gradIrrig, borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
+                    { type: 'line', label: 'L / Planta', data: data.map(d => parseFloat(d.litrosPlanta) || 0), borderColor: gradLinhaIrrig, borderWidth: 3, pointBackgroundColor: '#0f172a', pointRadius: 4, tension: 0.4, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 8, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 4, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
                 ], 'VOLUME HÍDRICO VS POR PLANTA');
                 configIrrigacao.options.scales.y1 = { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false } };
                 chartInst3 = new Chart(ctx3, configIrrigacao);
@@ -687,9 +749,28 @@
                 const ctx3p = document.getElementById('chart-irrigacao-pie').getContext('2d');
                 if(chartInst3Pie) chartInst3Pie.destroy();
                 chartInst3Pie = new Chart(ctx3p, buildChartConfig(ctx3p, 'doughnut', labels, [{ data: data.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: PIE_COLORS, borderWidth: 0 }], 'VOLUME POR BLOCO'));
+
+                // 4. ANOMALIAS TELA
+                const ctx4 = document.getElementById('chart-anomalias').getContext('2d');
+                if(chartInst4) chartInst4.destroy();
+                const peqData = data.map(d => parsePercNumber(d.percPequenas));
+                const defData = data.map(d => parsePercNumber(d.percDeformadas));
+                const gradPeq = createGradient(ctx4, '#a855f7', '#7e22ce');
+                const gradDef = createGradient(ctx4, '#f97316', '#c2410c');
+                
+                chartInst4 = new Chart(ctx4, buildChartConfig(ctx4, 'bar', labels, [
+                    { type: 'bar', label: '% Pequenas', data: peqData, backgroundColor: gradPeq, borderRadius: 6, barPercentage: 0.8 },
+                    { type: 'line', label: 'Tend. Peq.', data: peqData, borderColor: gradPeq, borderWidth: 3, tension: 0.4, pointBackgroundColor: '#a855f7', pointRadius: 3, fill: false, datalabels: { display: false } },
+                    { type: 'bar', label: '% Deformadas', data: defData, backgroundColor: gradDef, borderRadius: 6, barPercentage: 0.8 },
+                    { type: 'line', label: 'Tend. Def.', data: defData, borderColor: gradDef, borderWidth: 3, tension: 0.4, pointBackgroundColor: '#f97316', pointRadius: 3, fill: false, datalabels: { display: false } }
+                ], 'QUALIDADE DA COLHEITA: ANOMALIAS (%)'));
+                chartInst4.options.scales.y.suggestedMax = 5; chartInst4.update(); // Autoescala inteligente
+
+                const ctx4p = document.getElementById('chart-anomalias-pie').getContext('2d');
+                if(chartInst4Pie) chartInst4Pie.destroy();
+                chartInst4Pie = new Chart(ctx4p, buildChartConfig(ctx4p, 'doughnut', labels, [{ data: data.map(d => (parseFloat(d.cabPequenas) || 0) + (parseFloat(d.cabDeformadas) || 0)), backgroundColor: PIE_COLORS, borderWidth: 0 }], 'PROPORÇÃO DE ANOMALIAS TOTAIS'));
             };
 
-            // CRUD Logic
             els.form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 calculateAll(); 
@@ -701,7 +782,9 @@
                     falhas: els.falhas.value, percGerminada: els.percGerminada.value, percFalhas: els.percFalhas.value,
                     tempoProd: els.tempoProd.value, mortas: els.mortas.value, percMort: els.percMort.value,
                     volIrrigacao: els.volIrrigacao.value, litrosPlanta: els.litrosPlanta.value,
-                    dTrans: els.dTrans.value, dColheita: els.dColheita.value, diasColheita: els.diasColheita.value, diasColhendo: els.diasColhendo.value
+                    dTrans: els.dTrans.value, dColheita: els.dColheita.value, diasColheita: els.diasColheita.value, diasColhendo: els.diasColhendo.value,
+                    cabPequenas: els.cabPequenas.value, percPequenas: els.percPequenas.value,
+                    cabDeformadas: els.cabDeformadas.value, percDeformadas: els.percDeformadas.value
                 };
 
                 if (editingId) {
@@ -724,83 +807,127 @@
                 els.ciclo.value = rec.ciclo || ''; els.bandejas.value = rec.bandejas; els.transplantado.value = rec.transplantado;
                 els.tempoProd.value = rec.tempoProd; els.mortas.value = rec.mortas; els.volIrrigacao.value = rec.volIrrigacao;
                 els.dTrans.value = rec.dTrans; els.dColheita.value = rec.dColheita; els.diasColhendo.value = rec.diasColhendo;
+                els.cabPequenas.value = rec.cabPequenas || ''; els.cabDeformadas.value = rec.cabDeformadas || '';
                 calculateAll(); els.form.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            // Função auxiliar para gerar as etiquetas com a regra nowrap para não quebrar linha
+            const makeBadge = (text, type) => {
+                const styles = {
+                    'neutral': 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;',
+                    'dark': 'background:#f8fafc; color:#0f172a; border:1px solid #94a3b8;',
+                    'danger': 'background:#fff1f2; color:#be123c; border:1px solid #fecdd3;',
+                    'success': 'background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;',
+                    'purple': 'background:#faf5ff; color:#7e22ce; border:1px solid #e9d5ff;',
+                    'orange': 'background:#fff7ed; color:#c2410c; border:1px solid #fed7aa;'
+                };
+                return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; ${styles[type]}">${text}</span>`;
             };
 
             window.exportComprehensiveReport = async (format) => {
                 if(records.length === 0) return;
                 const sortedRecords = [...records].sort((a, b) => a.nomeBloco.localeCompare(b.nomeBloco));
                 
-                // 1. Calcular Largura Dinâmica (Folha expande para o lado automaticamente se houver muitos dados)
-                // Largura Base: 1280px. Aumenta 85px por bloco após os primeiros 8 blocos para gráficos não comprimirem.
-                const dynamicWidth = Math.max(1280, 700 + (sortedRecords.length * 85));
+                const dynamicWidth = Math.max(1750, 1000 + (sortedRecords.length * 85));
                 const exportPage = document.getElementById('export-comp-page');
                 exportPage.style.width = `${dynamicWidth}px`;
                 
-                // 2. Preencher Tabela (Centralizada e com Contornos)
+                // 2. Preencher Tabela (Bloco e Ciclo na mesma linha e sem quebra de texto)
                 const tbody = document.getElementById('exp-comp-tbody');
                 tbody.innerHTML = '';
                 sortedRecords.forEach((rec, idx) => {
-                    const rawPercGerm = parsePercNumber(rec.percGerminada);
-                    const rawPercFalhas = parsePercNumber(rec.percFalhas);
                     const rawPercMort = parsePercNumber(rec.percMort);
+                    const rawPercPequenas = parsePercNumber(rec.percPequenas);
+                    const rawPercDeformadas = parsePercNumber(rec.percDeformadas);
+                    
                     const formatExpPerc = (val) => parseFloat(val.toFixed(2)).toLocaleString('pt-BR');
                     
                     const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
                     const tr = document.createElement('tr');
                     tr.style.backgroundColor = bg;
                     
-                    // Células centralizadas com contornos (borders)
-                    const cellStyle = "padding: 14px 10px; border: 1px solid #cbd5e1; text-align: center;";
+                    const cellStyle = "padding: 14px 12px; border: 1px solid #e2e8f0; text-align: center; vertical-align: middle; white-space: nowrap;";
                     tr.innerHTML = `
-                        <td style="${cellStyle} font-weight: 800; color: #0f172a;">Bloco ${rec.nomeBloco} <br><span style="font-size:11px; font-weight: 600; color:#64748b;">${rec.ciclo || 'N/A'}</span></td>
-                        <td style="${cellStyle} font-weight: 700; color: #334155;">${rec.mudas || 0}</td>
-                        <td style="${cellStyle} font-weight: 700; color: #334155;">${rec.transplantado || 0}</td>
-                        <td style="${cellStyle} font-weight: 800; color: #10b981;">${formatExpPerc(rawPercGerm)}%</td>
-                        <td style="${cellStyle} font-weight: 800; color: #d97706;">${formatExpPerc(rawPercFalhas)}%</td>
-                        <td style="${cellStyle} font-weight: 800; color: ${rawPercMort > 5 ? '#e11d48' : '#334155'};">${formatExpPerc(rawPercMort)}%</td>
-                        <td style="${cellStyle} font-weight: 800; color: #2563eb;">${rec.volIrrigacao || 0}</td>
-                        <td style="${cellStyle} font-weight: 700; color: #64748b;">${rec.litrosPlanta || '0'}</td>
+                        <td style="${cellStyle} font-weight: 800; color: #0f172a;">Bloco ${rec.nomeBloco} <span style="font-size:12px; font-weight: 600; color:#64748b; margin-left: 6px;">(${rec.ciclo || 'N/A'})</span></td>
+                        <td style="${cellStyle}">${makeBadge(rec.transplantado || 0, 'dark')}</td>
+                        <td style="${cellStyle}">${makeBadge(formatExpPerc(rawPercMort) + '%', rawPercMort > 5 ? 'danger' : 'success')}</td>
+                        <td style="${cellStyle}">${makeBadge(rec.tempoProd ? rec.tempoProd + ' d' : '-', 'neutral')}</td>
+                        <td style="${cellStyle}">${makeBadge(rec.diasColheita || '-', 'neutral')}</td>
+                        <td style="${cellStyle}">${makeBadge(rec.diasColhendo ? rec.diasColhendo + ' d' : '-', 'neutral')}</td>
+                        <td style="${cellStyle}">${makeBadge(rec.cabPequenas || 0, 'purple')}</td>
+                        <td style="${cellStyle}">${makeBadge(formatExpPerc(rawPercPequenas) + '%', 'purple')}</td>
+                        <td style="${cellStyle}">${makeBadge(rec.cabDeformadas || 0, 'orange')}</td>
+                        <td style="${cellStyle}">${makeBadge(formatExpPerc(rawPercDeformadas) + '%', 'orange')}</td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // 3. Renderizar Gráficos Gigantes Nativos para o momento da exportação
+                // 3. Renderizar Gráficos Gigantes Nativos para a Exportação com Linhas
                 const labels = sortedRecords.map(d => `Bl. ${d.nomeBloco}`);
-                
-                exportChartsInstances.forEach(c => c.destroy()); // Limpa renderizações anteriores
+                exportChartsInstances.forEach(c => c.destroy());
                 exportChartsInstances = [];
 
-                // Germinação Export
+                // GERMINAÇÃO EXPORT
                 const ctx1E = document.getElementById('exp-chart1-main').getContext('2d');
+                const germDataE = sortedRecords.map(d => parsePercNumber(d.percGerminada));
+                const falhaDataE = sortedRecords.map(d => parsePercNumber(d.percFalhas));
+                const gradGermE = createGradient(ctx1E, '#10b981', '#047857');
+                const gradFalhaE = createGradient(ctx1E, '#f59e0b', '#d97706');
+                
                 let chart1E = new Chart(ctx1E, buildChartConfig(ctx1E, 'bar', labels, [
-                    { label: 'Germinado (%)', data: sortedRecords.map(d => parsePercNumber(d.percGerminada)), backgroundColor: createGradient(ctx1E, '#10b981', '#047857'), borderRadius: 6, barPercentage: 0.8 },
-                    { label: 'Falhas (%)', data: sortedRecords.map(d => parsePercNumber(d.percFalhas)), backgroundColor: createGradient(ctx1E, '#f59e0b', '#d97706'), borderRadius: 6, barPercentage: 0.8 }
+                    { type: 'bar', label: 'Germinado (%)', data: germDataE, backgroundColor: gradGermE, borderRadius: 6, barPercentage: 0.8 },
+                    { type: 'line', label: 'Tendência Germ.', data: germDataE, borderColor: gradGermE, borderWidth: 4, tension: 0.4, pointBackgroundColor: '#10b981', pointRadius: 5, fill: false, datalabels: { display: false } },
+                    { type: 'bar', label: 'Falhas (%)', data: falhaDataE, backgroundColor: gradFalhaE, borderRadius: 6, barPercentage: 0.8 }
                 ], 'GERMINAÇÃO VS FALHAS (%)', true));
-                chart1E.options.scales.y.max = 115; chart1E.update(); exportChartsInstances.push(chart1E);
+                chart1E.options.scales.y.suggestedMax = 90; chart1E.update(); exportChartsInstances.push(chart1E);
 
                 const ctx1pE = document.getElementById('exp-chart1-pie').getContext('2d');
                 exportChartsInstances.push(new Chart(ctx1pE, buildChartConfig(ctx1pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFloat(d.falhas) || 0), backgroundColor: PIE_COLORS, borderWidth: 0 }], 'PROPORÇÃO DE FALHAS', true)));
 
-                // Mortalidade Export
+                // MORTALIDADE EXPORT
                 const ctx2E = document.getElementById('exp-chart2-main').getContext('2d');
-                let chart2E = new Chart(ctx2E, buildChartConfig(ctx2E, 'bar', labels, [{ label: 'Mortalidade (%)', data: sortedRecords.map(d => parsePercNumber(d.percMort)), backgroundColor: createGradient(ctx2E, '#f43f5e', '#be123c'), borderRadius: 6, barPercentage: 0.6 }], 'TAXA DE MORTALIDADE (%)', true));
-                chart2E.options.scales.y.max = 100; chart2E.update(); exportChartsInstances.push(chart2E);
+                const mortDataE = sortedRecords.map(d => parsePercNumber(d.percMort));
+                const gradMortE = createGradient(ctx2E, '#f43f5e', '#be123c');
+                let chart2E = new Chart(ctx2E, buildChartConfig(ctx2E, 'bar', labels, [
+                    { type: 'bar', label: 'Mortalidade (%)', data: mortDataE, backgroundColor: gradMortE, borderRadius: 6, barPercentage: 0.6 },
+                    { type: 'line', label: 'Tendência Mort.', data: mortDataE, borderColor: gradMortE, borderWidth: 4, tension: 0.4, pointBackgroundColor: '#f43f5e', pointRadius: 5, fill: false, datalabels: { display: false } }
+                ], 'TAXA DE MORTALIDADE (%)', true));
+                chart2E.options.scales.y.suggestedMax = 5; chart2E.update(); exportChartsInstances.push(chart2E);
 
                 const ctx2pE = document.getElementById('exp-chart2-pie').getContext('2d');
                 exportChartsInstances.push(new Chart(ctx2pE, buildChartConfig(ctx2pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFloat(d.mortas) || 0), backgroundColor: PIE_COLORS, borderWidth: 0 }], 'PROPORÇÃO DE MORTES', true)));
 
-                // Irrigação Export
+                // IRRIGAÇÃO EXPORT
                 const ctx3E = document.getElementById('exp-chart3-main').getContext('2d');
+                const gradIrrigE = createGradient(ctx3E, '#3b82f6', '#1d4ed8');
+                const gradLinhaIrrigE = createGradient(ctx3E, '#0f172a', '#334155');
                 const configIrrigacaoE = buildChartConfig(ctx3E, 'bar', labels, [
-                    { type: 'bar', label: 'Volume (L)', data: sortedRecords.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: createGradient(ctx3E, '#3b82f6', '#1d4ed8'), borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
-                    { type: 'line', label: 'L / Planta', data: sortedRecords.map(d => parseFloat(d.litrosPlanta) || 0), borderColor: '#0f172a', borderWidth: 4, pointBackgroundColor: '#0f172a', pointRadius: 5, tension: 0.3, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 10, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 4, font: { weight: 'bold', size: 12 }, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
+                    { type: 'bar', label: 'Volume (L)', data: sortedRecords.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: gradIrrigE, borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
+                    { type: 'line', label: 'L / Planta', data: sortedRecords.map(d => parseFloat(d.litrosPlanta) || 0), borderColor: gradLinhaIrrigE, borderWidth: 4, pointBackgroundColor: '#0f172a', pointRadius: 5, tension: 0.4, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 10, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 4, font: { weight: 'bold', size: 12 }, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
                 ], 'VOLUME HÍDRICO VS POR PLANTA', true);
                 configIrrigacaoE.options.scales.y1 = { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false } };
                 exportChartsInstances.push(new Chart(ctx3E, configIrrigacaoE));
 
                 const ctx3pE = document.getElementById('exp-chart3-pie').getContext('2d');
                 exportChartsInstances.push(new Chart(ctx3pE, buildChartConfig(ctx3pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: PIE_COLORS, borderWidth: 0 }], 'VOLUME POR BLOCO', true)));
+
+                // ANOMALIAS EXPORT
+                const ctx4E = document.getElementById('exp-chart4-main').getContext('2d');
+                const peqDataE = sortedRecords.map(d => parsePercNumber(d.percPequenas));
+                const defDataE = sortedRecords.map(d => parsePercNumber(d.percDeformadas));
+                const gradPeqE = createGradient(ctx4E, '#a855f7', '#7e22ce');
+                const gradDefE = createGradient(ctx4E, '#f97316', '#c2410c');
+                
+                let chart4E = new Chart(ctx4E, buildChartConfig(ctx4E, 'bar', labels, [
+                    { type: 'bar', label: '% Pequenas', data: peqDataE, backgroundColor: gradPeqE, borderRadius: 6, barPercentage: 0.8 },
+                    { type: 'line', label: 'Tend. Peq.', data: peqDataE, borderColor: gradPeqE, borderWidth: 4, tension: 0.4, pointBackgroundColor: '#a855f7', pointRadius: 4, fill: false, datalabels: { display: false } },
+                    { type: 'bar', label: '% Deformadas', data: defDataE, backgroundColor: gradDefE, borderRadius: 6, barPercentage: 0.8 },
+                    { type: 'line', label: 'Tend. Def.', data: defDataE, borderColor: gradDefE, borderWidth: 4, tension: 0.4, pointBackgroundColor: '#f97316', pointRadius: 4, fill: false, datalabels: { display: false } }
+                ], 'QUALIDADE DA COLHEITA: ANOMALIAS (%)', true));
+                chart4E.options.scales.y.suggestedMax = 5; chart4E.update(); exportChartsInstances.push(chart4E);
+
+                const ctx4pE = document.getElementById('exp-chart4-pie').getContext('2d');
+                exportChartsInstances.push(new Chart(ctx4pE, buildChartConfig(ctx4pE, 'doughnut', labels, [{ data: sortedRecords.map(d => (parseFloat(d.cabPequenas) || 0) + (parseFloat(d.cabDeformadas) || 0)), backgroundColor: PIE_COLORS, borderWidth: 0 }], 'PROPORÇÃO DE ANOMALIAS TOTAIS', true)));
 
                 // Data de Emissão
                 const now = new Date();
@@ -809,7 +936,7 @@
                 document.getElementById('exp-comp-data').textContent = `${dataString} às ${horaString}`;
                 document.getElementById('exp-hora-emissao').textContent = `${dataString} às ${horaString}`;
 
-                // Aguarda um pequeno momento para o Chart.js terminar a renderização limpa no DOM escondido
+                // Processamento Final
                 setTimeout(async () => {
                     const el = document.getElementById('export-comp-page');
                     el.style.left = '0'; el.style.zIndex = '99999';
@@ -822,7 +949,6 @@
                         } else if (format === 'pdf') {
                             const { jsPDF } = window.jspdf;
                             const rect = el.getBoundingClientRect();
-                            // A folha PDF assume dinamicamente o tamanho exato da renderização HTML
                             const pdf = new jsPDF({ orientation: rect.height > rect.width ? 'p' : 'l', unit: 'px', format: [rect.width, rect.height] });
                             pdf.addImage(dataUrl, 'JPEG', 0, 0, rect.width, rect.height);
                             pdf.save('Relatorio_Consolidado_TSV.pdf');
@@ -831,7 +957,6 @@
                         console.error("Falha ao exportar:", e);
                     } finally {
                         el.style.left = '-9999px'; el.style.zIndex = '-1000';
-                        // Destrói as instâncias temporárias para liberar memória
                         exportChartsInstances.forEach(c => c.destroy());
                     }
                 }, 300);
