@@ -271,6 +271,27 @@
                     </section>
                 </div>
 
+                <!-- Nova Seção: Colheita e Produtividade -->
+                <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="section-title"><i class="ph-fill ph-basket text-emerald-600"></i> Colheita e Produtividade</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="qtd-colhida" class="label-style">Qtd. Colhida (Cabeças/Unidades)</label>
+                            <input type="number" id="qtd-colhida" placeholder="0" class="input-field font-semibold text-emerald-800">
+                        </div>
+                        <div>
+                            <label for="produtividade-transplantio" class="label-style">Produtividade / Transplantio</label>
+                            <input type="text" id="produtividade-transplantio" readonly placeholder="Automático" class="input-field input-readonly text-emerald-700 font-bold bg-emerald-50 border-emerald-200">
+                            <span class="text-[10px] text-slate-400 mt-1 font-medium block">Cálculo: (Colhido / Transplantado)</span>
+                        </div>
+                        <div>
+                            <label for="perc-produtividade" class="label-style">% Produtividade / Transplantio</label>
+                            <input type="text" id="perc-produtividade" readonly placeholder="Automático" class="input-field input-readonly text-emerald-700 font-bold bg-emerald-50 border-emerald-200">
+                            <span class="text-[10px] text-slate-400 mt-1 font-medium block">Percentual de Aproveitamento</span>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Qualidade da Colheita -->
                 <section class="bg-slate-50/50 p-5 rounded-xl border border-slate-100 shadow-sm">
                     <h3 class="section-title"><i class="ph-fill ph-warning-circle text-purple-500"></i> Qualidade da Colheita (Anomalias)</h3>
@@ -415,16 +436,19 @@
                         <table style="width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; border: 2px solid #94a3b8;">
                             <thead style="background: #0f172a; color: #ffffff;">
                                 <tr>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Bloco / Ciclo</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Transplant.</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Mortalidade</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">T. Prod.(dias)</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Dias P/Colh.</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Dias Colhendo</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Cab. Pequenas</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">% Pequenas</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">Cab. Deform.</th>
-                                    <th style="padding: 12px 6px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 12px; white-space: nowrap;">% Deform.</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Bloco / Ciclo</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Transplant.</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Colhido</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Prod. / Transp.</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">% Produtividade</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Mortalidade</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">T. Prod.(dias)</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Dias P/Colh.</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Dias Colhendo</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Cab. Pequenas</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">% Pequenas</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Cab. Deform.</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">% Deform.</th>
                                 </tr>
                             </thead>
                             <tbody id="exp-comp-tbody" style="color: #334155;">
@@ -504,6 +528,21 @@
             return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; ${styles[type]}">${text}</span>`;
         };
 
+        // Função para formatar campos que não foram preenchidos com o status "Em Produção" de contorno elegante laranja
+        const formatTableField = (value, badgeType = 'neutral', suffix = '') => {
+            if (value === undefined || value === null || String(value).trim() === '') {
+                return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; background:#fff7ed; color:#ea580c; border:1.5px solid #fdba74; box-shadow: 0 1px 2px rgba(234, 88, 12, 0.05); margin: 2px 0;">Em Produção</span>`;
+            }
+            return makeBadge(value + suffix, badgeType);
+        };
+
+        const formatCardValue = (val, suffix = '') => {
+            if (val === undefined || val === null || String(val).trim() === '') {
+                return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-bold bg-orange-50 text-orange-600 border border-orange-200 shadow-sm"><span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-1 animate-pulse"></span>Em Produção</span>`;
+            }
+            return `${val}${suffix}`;
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR', dateOptions);
@@ -536,6 +575,11 @@
                 dColheita: document.getElementById('data-colheita'),
                 diasColheita: document.getElementById('total-dias-colheita'),
                 diasColhendo: document.getElementById('dias-colhendo'),
+
+                // NOVOS CAMPOS: Colheita e Produtividade
+                qtdColhida: document.getElementById('qtd-colhida'),
+                produtividadeTransplantio: document.getElementById('produtividade-transplantio'),
+                percProdutividade: document.getElementById('perc-produtividade'),
 
                 cabPequenas: document.getElementById('cabecas-pequenas'),
                 percPequenas: document.getElementById('perc-pequenas'),
@@ -613,13 +657,25 @@
                     els.diasColheita.value = "";
                 }
 
+                // Cálculo de Colheita e Produtividade
+                const colhido = getNum(els.qtdColhida);
+                if (transplantado > 0 && els.qtdColhida.value !== "") {
+                    const prodRatio = colhido / transplantado;
+                    const prodPerc = (colhido / transplantado) * 100;
+                    els.produtividadeTransplantio.value = prodRatio.toFixed(2).replace('.', ',');
+                    els.percProdutividade.value = formatPerc(prodPerc);
+                } else {
+                    els.produtividadeTransplantio.value = "";
+                    els.percProdutividade.value = "";
+                }
+
                 const cPequenas = getNum(els.cabPequenas);
                 const cDeformadas = getNum(els.cabDeformadas);
                 els.percPequenas.value = formatPerc(transplantado > 0 ? (cPequenas / transplantado) * 100 : 0);
                 els.percDeformadas.value = formatPerc(transplantado > 0 ? (cDeformadas / transplantado) * 100 : 0);
             };
 
-            const inputsToListen = [els.bandejas, els.transplantado, els.mortas, els.volIrrigacao, els.dTrans, els.dColheita, els.cabPequenas, els.cabDeformadas];
+            const inputsToListen = [els.bandejas, els.transplantado, els.mortas, els.volIrrigacao, els.dTrans, els.dColheita, els.cabPequenas, els.cabDeformadas, els.qtdColhida];
             inputsToListen.forEach(inp => {
                 if (inp) inp.addEventListener('input', calculateAll);
             });
@@ -660,6 +716,54 @@
                     const formatVisPerc = (val) => parseFloat(val.toFixed(2)).toLocaleString('pt-BR');
                     const statusColor = rawPercMort > 5 ? 'bg-rose-500' : 'bg-emerald-500';
                     
+                    // Formatações individuais com Fallback "Em Produção"
+                    let cicloHTML = formatCardValue(rec.ciclo);
+                    
+                    let mudasTranspHTML = '';
+                    if (!rec.mudas || !rec.transplantado) {
+                        mudasTranspHTML = formatCardValue(null);
+                    } else {
+                        mudasTranspHTML = `<span class="text-base font-extrabold text-slate-800">${rec.mudas}</span> <span class="text-xs font-medium text-slate-400">/ ${rec.transplantado}</span>`;
+                    }
+
+                    let colhidoHTML = formatCardValue(rec.qtdColhida, " un.");
+                    
+                    let prodHTML = '';
+                    if (!rec.produtividadeTransplantio || !rec.percProdutividade) {
+                        prodHTML = formatCardValue(null);
+                    } else {
+                        prodHTML = `<span class="text-base font-extrabold text-emerald-800">${rec.produtividadeTransplantio}</span> <span class="text-[10px] font-bold text-emerald-600">(${rec.percProdutividade})</span>`;
+                    }
+
+                    let mortHTML = '';
+                    if (rec.mortas === undefined || rec.mortas === null || String(rec.mortas).trim() === '') {
+                        mortHTML = formatCardValue(null);
+                    } else {
+                        const fontColor = rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700';
+                        mortHTML = `<span class="text-base font-extrabold ${fontColor}">${rec.mortas}</span> <span class="text-[10px] font-bold text-slate-400">(${rec.percMort || '0,00%'})</span>`;
+                    }
+
+                    let volHTML = formatCardValue(rec.volIrrigacao, " L");
+                    if (rec.volIrrigacao && rec.litrosPlanta) {
+                        volHTML = `<span class="text-base font-extrabold text-blue-600">${rec.volIrrigacao} L</span> <span class="text-[10px] font-bold text-slate-400">(${rec.litrosPlanta})</span>`;
+                    }
+
+                    let diasColhHTML = formatCardValue(rec.diasColheita);
+                    
+                    let pequenasHTML = '';
+                    if (rec.cabPequenas === undefined || rec.cabPequenas === null || String(rec.cabPequenas).trim() === '') {
+                        pequenasHTML = formatCardValue(null);
+                    } else {
+                        pequenasHTML = `<span class="text-base font-extrabold text-purple-700">${rec.cabPequenas}</span> <span class="text-[10px] text-purple-400 font-bold">(${rec.percPequenas || '0,00%'})</span>`;
+                    }
+
+                    let deformadasHTML = '';
+                    if (rec.cabDeformadas === undefined || rec.cabDeformadas === null || String(rec.cabDeformadas).trim() === '') {
+                        deformadasHTML = formatCardValue(null);
+                    } else {
+                        deformadasHTML = `<span class="text-base font-extrabold text-orange-700">${rec.cabDeformadas}</span> <span class="text-[10px] text-orange-400 font-bold">(${rec.percDeformadas || '0,00%'})</span>`;
+                    }
+
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col relative group";
                     card.innerHTML = `
@@ -668,21 +772,22 @@
                             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
                                 <div>
                                     <h3 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">Bloco ${rec.nomeBloco}</h3>
-                                    <p class="text-xs font-semibold text-slate-500 mt-0.5">Ciclo: <span class="text-slate-700">${rec.ciclo || 'N/A'}</span></p>
+                                    <p class="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5">Ciclo: ${cicloHTML}</p>
                                 </div>
                                 <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button onclick="editRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-pencil-simple"></i> Editar</button>
                                     <button onclick="deleteRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-trash"></i> Excluir</button>
                                 </div>
                             </div>
-                            <!-- O uso de items-stretch e h-full nos blocos de colunas garante que fiquem exatamente do mesmo tamanho -->
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-stretch">
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mudas / Transp.</div><div class="text-base font-extrabold text-slate-800 whitespace-nowrap">${rec.mudas || 0} <span class="text-xs font-medium text-slate-400">/ ${rec.transplantado || 0}</span></div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mortalidade</div><div class="flex items-baseline gap-1"><span class="text-base font-extrabold whitespace-nowrap ${rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700'}">${formatVisPerc(rawPercMort)}%</span></div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Volume Hídrico</div><div class="text-base font-extrabold text-blue-600 whitespace-nowrap">${rec.volIrrigacao || 0} L</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Dias p/ Colh.</div><div class="text-base font-extrabold text-slate-700 whitespace-nowrap">${rec.diasColheita || '-'}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-purple-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Pequenas</div><div class="flex items-baseline gap-1 whitespace-nowrap"><span class="text-base font-extrabold text-purple-700">${rec.cabPequenas || 0}</span> <span class="text-[10px] text-purple-400 font-bold">(${rec.percPequenas || '0%'})</span></div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-orange-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Deform.</div><div class="flex items-baseline gap-1 whitespace-nowrap"><span class="text-base font-extrabold text-orange-700">${rec.cabDeformadas || 0}</span> <span class="text-[10px] text-orange-400 font-bold">(${rec.percDeformadas || '0%'})</span></div></div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-stretch">
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mudas / Transp.</div><div>${mudasTranspHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Qtd. Colhida</div><div>${colhidoHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Produtividade</div><div>${prodHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mortalidade</div><div>${mortHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Volume Hídrico</div><div>${volHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Dias p/ Colh.</div><div>${diasColhHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-purple-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Pequenas</div><div>${pequenasHTML}</div></div>
+                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-orange-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Deform.</div><div>${deformadasHTML}</div></div>
                             </div>
                         </div>
                     `;
@@ -764,7 +869,7 @@
                 if(chartInst1Pie) chartInst1Pie.destroy();
                 chartInst1Pie = new Chart(ctx1p, buildChartConfig(ctx1p, 'doughnut', labels, [{ data: data.map(d => parseFloat(d.falhas) || 0), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE FALHAS'));
 
-                // 2. MORTALIDADE TELA (Autoescalonamento ativado para destacar diferenças sutis)
+                // 2. MORTALIDADE TELA
                 const ctx2 = document.getElementById('chart-mortalidade').getContext('2d');
                 if(chartInst2) chartInst2.destroy();
                 const mortData = data.map(d => parsePercNumber(d.percMort));
@@ -797,7 +902,7 @@
                 if(chartInst3Pie) chartInst3Pie.destroy();
                 chartInst3Pie = new Chart(ctx3p, buildChartConfig(ctx3p, 'doughnut', labels, [{ data: data.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: PIE_COLORS }], 'VOLUME POR BLOCO'));
 
-                // 4. ANOMALIAS TELA (Autoescalonamento dinâmico de escala reduzida)
+                // 4. ANOMALIAS TELA
                 const ctx4 = document.getElementById('chart-anomalias').getContext('2d');
                 if(chartInst4) chartInst4.destroy();
                 const peqData = data.map(d => parsePercNumber(d.percPequenas));
@@ -831,7 +936,11 @@
                     volIrrigacao: els.volIrrigacao.value, litrosPlanta: els.litrosPlanta.value,
                     dTrans: els.dTrans.value, dColheita: els.dColheita.value, diasColheita: els.diasColheita.value, diasColhendo: els.diasColhendo.value,
                     cabPequenas: els.cabPequenas.value, percPequenas: els.percPequenas.value,
-                    cabDeformadas: els.cabDeformadas.value, percDeformadas: els.percDeformadas.value
+                    cabDeformadas: els.cabDeformadas.value, percDeformadas: els.percDeformadas.value,
+                    // Novos campos salvos
+                    qtdColhida: els.qtdColhida.value,
+                    produtividadeTransplantio: els.produtividadeTransplantio.value,
+                    percProdutividade: els.percProdutividade.value
                 };
 
                 if (editingId) {
@@ -855,6 +964,8 @@
                 els.tempoProd.value = rec.tempoProd; els.mortas.value = rec.mortas; els.volIrrigacao.value = rec.volIrrigacao;
                 els.dTrans.value = rec.dTrans; els.dColheita.value = rec.dColheita; els.diasColhendo.value = rec.diasColhendo;
                 els.cabPequenas.value = rec.cabPequenas || ''; els.cabDeformadas.value = rec.cabDeformadas || '';
+                // Recuperar novos campos no formulário
+                els.qtdColhida.value = rec.qtdColhida || '';
                 calculateAll(); els.form.scrollIntoView({ behavior: 'smooth' });
             };
 
@@ -879,18 +990,45 @@
                     const tr = document.createElement('tr');
                     tr.style.backgroundColor = bg;
                     
-                    const cellStyle = "padding: 14px 12px; border: 1px solid #e2e8f0; text-align: center; vertical-align: middle; white-space: nowrap;";
+                    const cellStyle = "padding: 14px 12px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; white-space: nowrap;";
+                    
+                    let cicloCellHTML = '';
+                    if (!rec.ciclo || String(rec.ciclo).trim() === '') {
+                        cicloCellHTML = `<br><span style="display:inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 800; background:#fff7ed; color:#ea580c; border:1px solid #fdba74;">Em Produção</span>`;
+                    } else {
+                        cicloCellHTML = `<span style="font-size:12px; font-weight: 600; color:#64748b; margin-left: 6px;">(${rec.ciclo})</span>`;
+                    }
+
+                    // Preparando valores individuais para a exportação
+                    const transVal = rec.transplantado ? rec.transplantado : '';
+                    const colhidoVal = rec.qtdColhida ? rec.qtdColhida : '';
+                    const prodRatioVal = rec.produtividadeTransplantio ? rec.produtividadeTransplantio : '';
+                    const prodPercVal = rec.percProdutividade ? rec.percProdutividade : '';
+
+                    const mortVal = rec.mortas ? `${rec.mortas} (${rec.percMort})` : '';
+                    const tempoVal = rec.tempoProd ? `${rec.tempoProd} d` : '';
+                    const diasColhVal = rec.diasColheita ? rec.diasColheita : '';
+                    const diasColhendoVal = rec.diasColhendo ? `${rec.diasColhendo} d` : '';
+
+                    const pequenasVal = rec.cabPequenas ? rec.cabPequenas : '';
+                    const percPeqVal = rec.percPequenas ? rec.percPequenas : '';
+                    const deformadasVal = rec.cabDeformadas ? rec.cabDeformadas : '';
+                    const percDefVal = rec.percDeformadas ? rec.percDeformadas : '';
+
                     tr.innerHTML = `
-                        <td style="${cellStyle} font-weight: 800; color: #0f172a;">Bloco ${rec.nomeBloco} <span style="font-size:12px; font-weight: 600; color:#64748b; margin-left: 6px;">(${rec.ciclo || 'N/A'})</span></td>
-                        <td style="${cellStyle}">${makeBadge(rec.transplantado || 0, 'dark')}</td>
-                        <td style="${cellStyle}">${makeBadge(formatExpPerc(rawPercMort) + '%', rawPercMort > 5 ? 'danger' : 'success')}</td>
-                        <td style="${cellStyle}">${makeBadge(rec.tempoProd ? rec.tempoProd + ' d' : '-', 'neutral')}</td>
-                        <td style="${cellStyle}">${makeBadge(rec.diasColheita || '-', 'neutral')}</td>
-                        <td style="${cellStyle}">${makeBadge(rec.diasColhendo ? rec.diasColhendo + ' d' : '-', 'neutral')}</td>
-                        <td style="${cellStyle}">${makeBadge(rec.cabPequenas || 0, 'purple')}</td>
-                        <td style="${cellStyle}">${makeBadge(formatExpPerc(rawPercPequenas) + '%', 'purple')}</td>
-                        <td style="${cellStyle}">${makeBadge(rec.cabDeformadas || 0, 'orange')}</td>
-                        <td style="${cellStyle}">${makeBadge(formatExpPerc(rawPercDeformadas) + '%', 'orange')}</td>
+                        <td style="${cellStyle} font-weight: 800; color: #0f172a; border-left: 2px solid #cbd5e1;">Bloco ${rec.nomeBloco} ${cicloCellHTML}</td>
+                        <td style="${cellStyle}">${formatTableField(transVal, 'dark')}</td>
+                        <td style="${cellStyle}">${formatTableField(colhidoVal, 'success')}</td>
+                        <td style="${cellStyle}">${formatTableField(prodRatioVal, 'success')}</td>
+                        <td style="${cellStyle}">${formatTableField(prodPercVal, 'success')}</td>
+                        <td style="${cellStyle}">${formatTableField(mortVal, rawPercMort > 5 ? 'danger' : 'success')}</td>
+                        <td style="${cellStyle}">${formatTableField(tempoVal, 'neutral')}</td>
+                        <td style="${cellStyle}">${formatTableField(diasColhVal, 'neutral')}</td>
+                        <td style="${cellStyle}">${formatTableField(diasColhendoVal, 'neutral')}</td>
+                        <td style="${cellStyle}">${formatTableField(pequenasVal, 'purple')}</td>
+                        <td style="${cellStyle}">${formatTableField(percPeqVal, 'purple')}</td>
+                        <td style="${cellStyle}">${formatTableField(deformadasVal, 'orange')}</td>
+                        <td style="${cellStyle} border-right: 2px solid #cbd5e1;">${formatTableField(percDefVal, 'orange')}</td>
                     `;
                     tbody.appendChild(tr);
                 });
