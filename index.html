@@ -116,7 +116,7 @@
         <header class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div class="p-0">
-                    <img src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="h-14 w-auto object-contain drop-shadow-sm">
+                    <img src="https://i.imgur.com/wEozr34.png" alt="Logo Fazenda Oásis" class="h-14 w-auto object-contain drop-shadow-sm" onerror="this.src='https://placehold.co/120x60/e2e8f0/0f172a?text=Fazenda+Oasis'">
                 </div>
                 <div>
                     <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Registro Geral TSV Master</h1>
@@ -353,7 +353,6 @@
                         <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-germinacao"></canvas></div>
                         <div class="h-[320px] w-full relative"><canvas id="chart-germinacao-pie"></canvas></div>
                     </div>
-                    <!-- Traço Temático de Germinação / Falhas (Verde para Laranja) -->
                     <div class="w-full h-[3px] bg-gradient-to-r from-emerald-500 via-emerald-400 to-amber-500 rounded-full opacity-60 mt-6"></div>
                 </div>
                 
@@ -363,7 +362,6 @@
                         <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-mortalidade"></canvas></div>
                         <div class="h-[320px] w-full relative"><canvas id="chart-mortalidade-pie"></canvas></div>
                     </div>
-                    <!-- Traço Temático de Mortalidade (Degradê de Rosas) -->
                     <div class="w-full h-[3px] bg-gradient-to-r from-rose-500 via-rose-400 to-red-600 rounded-full opacity-60 mt-6"></div>
                 </div>
                 
@@ -373,7 +371,6 @@
                         <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-irrigacao"></canvas></div>
                         <div class="h-[320px] w-full relative"><canvas id="chart-irrigacao-pie"></canvas></div>
                     </div>
-                    <!-- Traço Temático de Irrigação (Azul para Indigo) -->
                     <div class="w-full h-[3px] bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-600 rounded-full opacity-60 mt-6"></div>
                 </div>
                 
@@ -383,7 +380,6 @@
                         <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-anomalias"></canvas></div>
                         <div class="h-[320px] w-full relative"><canvas id="chart-anomalias-pie"></canvas></div>
                     </div>
-                    <!-- Traço Temático de Anomalias (Roxo para Laranja) -->
                     <div class="w-full h-[3px] bg-gradient-to-r from-purple-500 via-pink-400 to-orange-500 rounded-full opacity-60 mt-6"></div>
                 </div>
             </div>
@@ -404,15 +400,43 @@
         </div>
     </main>
 
+    <!-- Modal de Confirmação de Exclusão (Customizado, sem alert/confirm) -->
+    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4">
+        <!-- Backdrop Desfocado -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"></div>
+        
+        <!-- Conteúdo do Modal -->
+        <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full border border-slate-100 overflow-hidden transform transition-all scale-95 opacity-0 duration-300" id="delete-modal-content">
+            <div class="p-6">
+                <div class="flex items-center gap-4 text-rose-600 mb-4">
+                    <div class="bg-rose-100 text-rose-600 p-3 rounded-xl flex items-center justify-center">
+                        <i class="ph-fill ph-trash text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight">Confirmar Exclusão</h3>
+                </div>
+                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Você realmente deseja remover o lote do <strong id="delete-modal-block-name" class="text-slate-900 font-extrabold bg-slate-100 px-2 py-1 rounded"></strong>? Esta ação não pode ser desfeita e os dados correspondentes serão apagados permanentemente do histórico.
+                </p>
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button type="button" id="btn-cancel-delete" class="px-5 py-2.5 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 hover:text-slate-700 transition-all flex items-center gap-2 text-xs">
+                        <i class="ph-bold ph-x"></i> Não, Cancelar
+                    </button>
+                    <button type="button" id="btn-confirm-delete" class="px-5 py-2.5 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-700 transition-all flex items-center gap-2 text-xs shadow-md hover:shadow-rose-100 hover:shadow-lg">
+                        <i class="ph-bold ph-trash-simple"></i> Sim, Apagar Lote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TEMPLATE DE EXPORTAÇÃO (LARGURA DINÂMICA E HEADER COM BLEED TOTAL) -->
     <div id="export-comp-container" class="export-container">
         <div id="export-comp-page" class="export-page-hd">
             
-            <!-- Cabeçalho Executivo de Exportação (Bleed total para as bordas) -->
+            <!-- Cabeçalho Executivo de Exportação -->
             <div style="display: flex; align-items: center; justify-content: space-between; background-color: #064e3b; padding: 40px 50px; margin-bottom: 40px; border-bottom: 4px solid #047857; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
                 <div style="display: flex; align-items: center; gap: 30px;">
-                    <!-- Logo integrada sem contornos ou molduras brancas para máxima elegância -->
-                    <img src="https://i.imgur.com/wEozr34.png" alt="Logo" style="height: 100px; width: auto; object-fit: contain;">
+                    <img src="https://i.imgur.com/wEozr34.png" alt="Logo" style="height: 100px; width: auto; object-fit: contain;" onerror="this.src='https://placehold.co/120x60/e2e8f0/0f172a?text=Fazenda+Oasis'">
                     <div>
                         <h1 style="font-size: 34px; font-weight: 900; margin: 0; color: #ffffff; letter-spacing: -0.025em;">Relatório Consolidado de Safra</h1>
                         <p style="margin: 8px 0 0 0; color: #a7f3d0; font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.05em;">TSV Master • Fazenda Oásis</p>
@@ -452,13 +476,13 @@
                                 </tr>
                             </thead>
                             <tbody id="exp-comp-tbody" style="color: #334155;">
-                                <!-- JS preenche isso -->
+                                <!-- JS preenche -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Gráficos para Exportação (Mais Altos, Pizza Maior) -->
+                <!-- Gráficos para Exportação -->
                 <div style="flex-grow: 1;">
                     <h2 style="font-size: 20px; font-weight: 900; color: #064e3b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 25px; display: flex; align-items: center; gap: 8px;">
                         <span style="display:inline-block; width:6px; height:18px; background-color:#2563eb; border-radius:3px;"></span> 2. Análise Gráfica & Proporção por Bloco
@@ -469,7 +493,6 @@
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart1-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart1-pie"></canvas></div>
                     </div>
-                    <!-- Traço separador correspondente (Germinação) -->
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #10b981, #f59e0b); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
 
                     <!-- MORTALIDADE ROW EXPORT -->
@@ -477,7 +500,6 @@
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart2-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart2-pie"></canvas></div>
                     </div>
-                    <!-- Traço separador correspondente (Mortalidade) -->
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #f43f5e, #be123c); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
 
                     <!-- IRRIGAÇÃO ROW EXPORT -->
@@ -485,7 +507,6 @@
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart3-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart3-pie"></canvas></div>
                     </div>
-                    <!-- Traço separador correspondente (Irrigação) -->
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #3b82f6, #1d4ed8); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
 
                     <!-- ANOMALIAS ROW EXPORT -->
@@ -493,7 +514,6 @@
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart4-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart4-pie"></canvas></div>
                     </div>
-                    <!-- Traço separador correspondente (Anomalias) -->
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
                 </div>
 
@@ -511,11 +531,21 @@
         
         let chartInst1 = null, chartInst2 = null, chartInst3 = null, chartInst4 = null;
         let chartInst1Pie = null, chartInst2Pie = null, chartInst3Pie = null, chartInst4Pie = null;
-        let exportChartsInstances = []; // Guarda as instâncias temporárias para a exportação
+        let exportChartsInstances = []; 
+        let idToDelete = null; // ID temporário para exclusão segura
 
-        const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4', '#8b5cf6'];
+        const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4'];
 
-        // Função auxiliar para gerar etiquetas coloridas com pílulas robustas e alinhadas
+        // Função de cores dinâmicas para evitar bugs quando houver mais de 11 blocos
+        const getColors = (count) => {
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                colors.push(PIE_COLORS[i % PIE_COLORS.length]);
+            }
+            return colors;
+        };
+
+        // Função para formatar etiquetas coloridas com pílulas consistentes
         const makeBadge = (text, type) => {
             const styles = {
                 'neutral': 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;',
@@ -528,7 +558,24 @@
             return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; ${styles[type]}">${text}</span>`;
         };
 
-        // Função para formatar campos que não foram preenchidos com o status "Em Produção" de contorno elegante laranja
+        // Conversor seguro de strings formatadas para Float, lidando com vírgulas e vazios
+        const parseFormattedFloat = (val) => {
+            if (val === undefined || val === null) return 0;
+            const clean = String(val).replace(',', '.').replace(/[^\d.-]/g, '');
+            const parsed = parseFloat(clean);
+            return isNaN(parsed) ? 0 : parsed;
+        };
+
+        const parsePercNumber = (val) => {
+            if (val === undefined || val === null) return 0;
+            const str = String(val).trim();
+            if (!str) return 0;
+            const clean = str.replace(',', '.').replace(/[^\d.-]/g, '');
+            const parsed = parseFloat(clean);
+            return isNaN(parsed) ? 0 : parsed;
+        };
+
+        // Fallback robusto para campos ainda não preenchidos (Lotes em produção)
         const formatTableField = (value, badgeType = 'neutral', suffix = '') => {
             if (value === undefined || value === null || String(value).trim() === '') {
                 return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; background:#fff7ed; color:#ea580c; border:1.5px solid #fdba74; box-shadow: 0 1px 2px rgba(234, 88, 12, 0.05); margin: 2px 0;">Em Produção</span>`;
@@ -548,6 +595,12 @@
             document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR', dateOptions);
 
             let records = JSON.parse(localStorage.getItem('tsv_records')) || [];
+            
+            // Garantir que todos os registros carregados tenham um ID válido
+            records.forEach(rec => {
+                if (!rec.id) rec.id = Date.now().toString() + Math.random().toString();
+            });
+            
             let editingId = null;
 
             const els = {
@@ -576,7 +629,6 @@
                 diasColheita: document.getElementById('total-dias-colheita'),
                 diasColhendo: document.getElementById('dias-colhendo'),
 
-                // NOVOS CAMPOS: Colheita e Produtividade
                 qtdColhida: document.getElementById('qtd-colhida'),
                 produtividadeTransplantio: document.getElementById('produtividade-transplantio'),
                 percProdutividade: document.getElementById('perc-produtividade'),
@@ -612,7 +664,6 @@
                 return isNaN(v) ? 0 : v; 
             };
             const formatPerc = (v) => (!isFinite(v) || isNaN(v)) ? "0,00%" : v.toFixed(2).replace('.', ',') + "%";
-            const parsePercNumber = (str) => parseFloat(String(str).replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
 
             const calculateAll = () => {
                 const bandejas = getNum(els.bandejas);
@@ -657,7 +708,6 @@
                     els.diasColheita.value = "";
                 }
 
-                // Cálculo de Colheita e Produtividade
                 const colhido = getNum(els.qtdColhida);
                 if (transplantado > 0 && els.qtdColhida.value !== "") {
                     const prodRatio = colhido / transplantado;
@@ -694,109 +744,124 @@
             els.btnCancelEdit.addEventListener('click', resetForm);
 
             const renderHistory = () => {
-                els.historyGrid.innerHTML = '';
-                els.totalRecords.textContent = `${records.length} lote${records.length !== 1 ? 's' : ''}`;
-                
-                if (records.length === 0) {
-                    els.historyGrid.innerHTML = `
-                        <div class="bg-white p-16 text-center rounded-2xl border border-dashed border-slate-300 text-slate-500 shadow-sm">
-                            <i class="ph-fill ph-tray text-5xl mb-3 text-slate-300"></i>
-                            <p class="font-bold text-lg text-slate-600">Nenhum bloco registrado</p>
-                            <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Preencha os dados no formulário acima para iniciar o monitoramento de safra.</p>
-                        </div>
-                    `;
-                    els.chartsWrapper.classList.add('hidden');
-                    return;
-                }
-
-                const sortedRecords = [...records].sort((a, b) => a.nomeBloco.localeCompare(b.nomeBloco));
-
-                sortedRecords.forEach(rec => {
-                    const rawPercMort = parsePercNumber(rec.percMort);
-                    const formatVisPerc = (val) => parseFloat(val.toFixed(2)).toLocaleString('pt-BR');
-                    const statusColor = rawPercMort > 5 ? 'bg-rose-500' : 'bg-emerald-500';
+                try {
+                    els.historyGrid.innerHTML = '';
+                    els.totalRecords.textContent = `${records.length} lote${records.length !== 1 ? 's' : ''}`;
                     
-                    // Formatações individuais com Fallback "Em Produção"
-                    let cicloHTML = formatCardValue(rec.ciclo);
-                    
-                    let mudasTranspHTML = '';
-                    if (!rec.mudas || !rec.transplantado) {
-                        mudasTranspHTML = formatCardValue(null);
-                    } else {
-                        mudasTranspHTML = `<span class="text-base font-extrabold text-slate-800">${rec.mudas}</span> <span class="text-xs font-medium text-slate-400">/ ${rec.transplantado}</span>`;
-                    }
-
-                    let colhidoHTML = formatCardValue(rec.qtdColhida, " un.");
-                    
-                    let prodHTML = '';
-                    if (!rec.produtividadeTransplantio || !rec.percProdutividade) {
-                        prodHTML = formatCardValue(null);
-                    } else {
-                        prodHTML = `<span class="text-base font-extrabold text-emerald-800">${rec.produtividadeTransplantio}</span> <span class="text-[10px] font-bold text-emerald-600">(${rec.percProdutividade})</span>`;
-                    }
-
-                    let mortHTML = '';
-                    if (rec.mortas === undefined || rec.mortas === null || String(rec.mortas).trim() === '') {
-                        mortHTML = formatCardValue(null);
-                    } else {
-                        const fontColor = rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700';
-                        mortHTML = `<span class="text-base font-extrabold ${fontColor}">${rec.mortas}</span> <span class="text-[10px] font-bold text-slate-400">(${rec.percMort || '0,00%'})</span>`;
-                    }
-
-                    let volHTML = formatCardValue(rec.volIrrigacao, " L");
-                    if (rec.volIrrigacao && rec.litrosPlanta) {
-                        volHTML = `<span class="text-base font-extrabold text-blue-600">${rec.volIrrigacao} L</span> <span class="text-[10px] font-bold text-slate-400">(${rec.litrosPlanta})</span>`;
-                    }
-
-                    let diasColhHTML = formatCardValue(rec.diasColheita);
-                    
-                    let pequenasHTML = '';
-                    if (rec.cabPequenas === undefined || rec.cabPequenas === null || String(rec.cabPequenas).trim() === '') {
-                        pequenasHTML = formatCardValue(null);
-                    } else {
-                        pequenasHTML = `<span class="text-base font-extrabold text-purple-700">${rec.cabPequenas}</span> <span class="text-[10px] text-purple-400 font-bold">(${rec.percPequenas || '0,00%'})</span>`;
-                    }
-
-                    let deformadasHTML = '';
-                    if (rec.cabDeformadas === undefined || rec.cabDeformadas === null || String(rec.cabDeformadas).trim() === '') {
-                        deformadasHTML = formatCardValue(null);
-                    } else {
-                        deformadasHTML = `<span class="text-base font-extrabold text-orange-700">${rec.cabDeformadas}</span> <span class="text-[10px] text-orange-400 font-bold">(${rec.percDeformadas || '0,00%'})</span>`;
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col relative group";
-                    card.innerHTML = `
-                        <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor} opacity-90"></div>
-                        <div class="p-5 pl-7 flex flex-col gap-4">
-                            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                                <div>
-                                    <h3 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">Bloco ${rec.nomeBloco}</h3>
-                                    <p class="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5">Ciclo: ${cicloHTML}</p>
-                                </div>
-                                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onclick="editRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-pencil-simple"></i> Editar</button>
-                                    <button onclick="deleteRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-trash"></i> Excluir</button>
-                                </div>
+                    if (records.length === 0) {
+                        els.historyGrid.innerHTML = `
+                            <div class="bg-white p-16 text-center rounded-2xl border border-dashed border-slate-300 text-slate-500 shadow-sm">
+                                <i class="ph-fill ph-tray text-5xl mb-3 text-slate-300"></i>
+                                <p class="font-bold text-lg text-slate-600">Nenhum bloco registrado</p>
+                                <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Preencha os dados no formulário acima para iniciar o monitoramento de safra.</p>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-stretch">
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mudas / Transp.</div><div>${mudasTranspHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Qtd. Colhida</div><div>${colhidoHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Produtividade</div><div>${prodHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mortalidade</div><div>${mortHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Volume Hídrico</div><div>${volHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Dias p/ Colh.</div><div>${diasColhHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-purple-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Pequenas</div><div>${pequenasHTML}</div></div>
-                                <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-orange-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Deform.</div><div>${deformadasHTML}</div></div>
-                            </div>
-                        </div>
-                    `;
-                    els.historyGrid.appendChild(card);
-                });
+                        `;
+                        els.chartsWrapper.classList.add('hidden');
+                        return;
+                    }
 
-                if (records.length > 0) {
-                    els.chartsWrapper.classList.remove('hidden');
-                    updateCharts(sortedRecords);
+                    // ORDENAÇÃO NUMÉRICA ROBUSTA: resolve de vez a colisão alfabética de nomes e vazios
+                    const sortedRecords = [...records].sort((a, b) => {
+                        const nameA = String(a && a.nomeBloco ? a.nomeBloco : '').trim();
+                        const nameB = String(b && b.nomeBloco ? b.nomeBloco : '').trim();
+                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+                    });
+
+                    sortedRecords.forEach(rec => {
+                        try {
+                            const rawPercMort = parsePercNumber(rec.percMort);
+                            const statusColor = rawPercMort > 5 ? 'bg-rose-500' : 'bg-emerald-500';
+                            
+                            let cicloHTML = formatCardValue(rec.ciclo);
+                            
+                            let mudasTranspHTML = '';
+                            if (!rec.mudas || !rec.transplantado) {
+                                mudasTranspHTML = formatCardValue(null);
+                            } else {
+                                mudasTranspHTML = `<span class="text-base font-extrabold text-slate-800">${rec.mudas}</span> <span class="text-xs font-medium text-slate-400">/ ${rec.transplantado}</span>`;
+                            }
+
+                            let colhidoHTML = formatCardValue(rec.qtdColhida, " un.");
+                            
+                            let prodHTML = '';
+                            if (!rec.produtividadeTransplantio || !rec.percProdutividade) {
+                                prodHTML = formatCardValue(null);
+                            } else {
+                                prodHTML = `<span class="text-base font-extrabold text-emerald-800">${rec.produtividadeTransplantio}</span> <span class="text-[10px] font-bold text-emerald-600">(${rec.percProdutividade})</span>`;
+                            }
+
+                            let mortHTML = '';
+                            if (rec.mortas === undefined || rec.mortas === null || String(rec.mortas).trim() === '') {
+                                mortHTML = formatCardValue(null);
+                            } else {
+                                const fontColor = rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700';
+                                mortHTML = `<span class="text-base font-extrabold ${fontColor}">${rec.mortas}</span> <span class="text-[10px] font-bold text-slate-400">(${rec.percMort || '0,00%'})</span>`;
+                            }
+
+                            let volHTML = formatCardValue(rec.volIrrigacao, " L");
+                            if (rec.volIrrigacao && rec.litrosPlanta) {
+                                volHTML = `<span class="text-base font-extrabold text-blue-600">${rec.volIrrigacao} L</span> <span class="text-[10px] font-bold text-slate-400">(${rec.litrosPlanta})</span>`;
+                            }
+
+                            let diasColhHTML = formatCardValue(rec.diasColheita);
+                            
+                            let pequenasHTML = '';
+                            if (rec.cabPequenas === undefined || rec.cabPequenas === null || String(rec.cabPequenas).trim() === '') {
+                                pequenasHTML = formatCardValue(null);
+                            } else {
+                                pequenasHTML = `<span class="text-base font-extrabold text-purple-700">${rec.cabPequenas}</span> <span class="text-[10px] text-purple-400 font-bold">(${rec.percPequenas || '0,00%'})</span>`;
+                            }
+
+                            let deformadasHTML = '';
+                            if (rec.cabDeformadas === undefined || rec.cabDeformadas === null || String(rec.cabDeformadas).trim() === '') {
+                                deformadasHTML = formatCardValue(null);
+                            } else {
+                                deformadasHTML = `<span class="text-base font-extrabold text-orange-700">${rec.cabDeformadas}</span> <span class="text-[10px] text-orange-400 font-bold">(${rec.percDeformadas || '0,00%'})</span>`;
+                            }
+
+                            const card = document.createElement('div');
+                            card.className = "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col relative group";
+                            card.innerHTML = `
+                                <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor} opacity-90"></div>
+                                <div class="p-5 pl-7 flex flex-col gap-4">
+                                    <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                                        <div>
+                                            <h3 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">Bloco ${rec.nomeBloco}</h3>
+                                            <p class="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5">Ciclo: ${cicloHTML}</p>
+                                        </div>
+                                        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="editRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-pencil-simple"></i> Editar</button>
+                                            <button onclick="deleteRecord('${rec.id}')" class="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all flex items-center gap-1"><i class="ph-bold ph-trash"></i> Excluir</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-stretch">
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mudas / Transp.</div><div>${mudasTranspHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Qtd. Colhida</div><div>${colhidoHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Produtividade</div><div>${prodHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Mortalidade</div><div>${mortHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Volume Hídrico</div><div>${volHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-slate-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Dias p/ Colh.</div><div>${diasColhHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-purple-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Pequenas</div><div>${pequenasHTML}</div></div>
+                                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-between h-full min-h-[76px]"><div class="text-[10px] text-orange-500 font-bold mb-1 uppercase tracking-wide whitespace-nowrap">Cab. Deform.</div><div>${deformadasHTML}</div></div>
+                                    </div>
+                                </div>
+                            `;
+                            els.historyGrid.appendChild(card);
+                        } catch (cardErr) {
+                            console.error("Erro ao renderizar card individual:", cardErr);
+                        }
+                    });
+
+                    if (records.length > 0) {
+                        els.chartsWrapper.classList.remove('hidden');
+                        try {
+                            updateCharts(sortedRecords);
+                        } catch (chartErr) {
+                            console.error("Erro ao atualizar gráficos:", chartErr);
+                        }
+                    }
+                } catch (globalErr) {
+                    console.error("Erro global ao renderizar histórico:", globalErr);
                 }
             };
 
@@ -836,11 +901,11 @@
                     };
                 } else if (type === 'doughnut') {
                     config.options.plugins.datalabels = pieDlConfig;
-                    config.options.cutout = '40%'; // Rosca mais espessa e robusta para melhor visualização
+                    config.options.cutout = '40%'; 
                     dataConfigs.forEach(ds => {
                         ds.borderWidth = 3;
                         ds.borderColor = '#ffffff';
-                        ds.borderRadius = 4; // Cantos levemente arredondados
+                        ds.borderRadius = 4; 
                     });
                 }
 
@@ -849,8 +914,9 @@
 
             const updateCharts = (data) => {
                 const labels = data.map(d => `Bl. ${d.nomeBloco}`);
+                const colorsPalette = getColors(labels.length);
                 
-                // 1. GERMINAÇÃO TELA (Com linha de tendência)
+                // 1. GERMINAÇÃO TELA 
                 const ctx1 = document.getElementById('chart-germinacao').getContext('2d');
                 if(chartInst1) chartInst1.destroy();
                 const germData = data.map(d => parsePercNumber(d.percGerminada));
@@ -867,7 +933,7 @@
 
                 const ctx1p = document.getElementById('chart-germinacao-pie').getContext('2d');
                 if(chartInst1Pie) chartInst1Pie.destroy();
-                chartInst1Pie = new Chart(ctx1p, buildChartConfig(ctx1p, 'doughnut', labels, [{ data: data.map(d => parseFloat(d.falhas) || 0), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE FALHAS'));
+                chartInst1Pie = new Chart(ctx1p, buildChartConfig(ctx1p, 'doughnut', labels, [{ data: data.map(d => parseFormattedFloat(d.falhas)), backgroundColor: colorsPalette }], 'PROPORÇÃO DE FALHAS'));
 
                 // 2. MORTALIDADE TELA
                 const ctx2 = document.getElementById('chart-mortalidade').getContext('2d');
@@ -883,7 +949,7 @@
 
                 const ctx2p = document.getElementById('chart-mortalidade-pie').getContext('2d');
                 if(chartInst2Pie) chartInst2Pie.destroy();
-                chartInst2Pie = new Chart(ctx2p, buildChartConfig(ctx2p, 'doughnut', labels, [{ data: data.map(d => parseFloat(d.mortas) || 0), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE MORTES'));
+                chartInst2Pie = new Chart(ctx2p, buildChartConfig(ctx2p, 'doughnut', labels, [{ data: data.map(d => parseFormattedFloat(d.mortas)), backgroundColor: colorsPalette }], 'PROPORÇÃO DE MORTES'));
 
                 // 3. IRRIGAÇÃO TELA
                 const ctx3 = document.getElementById('chart-irrigacao').getContext('2d');
@@ -892,15 +958,15 @@
                 const gradLinhaIrrig = createGradient(ctx3, '#0f172a', '#334155');
                 
                 const configIrrigacao = buildChartConfig(ctx3, 'bar', labels, [
-                    { type: 'bar', label: 'Volume (L)', data: data.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: gradIrrig, borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
-                    { type: 'line', label: 'L / Planta', data: data.map(d => parseFloat(d.litrosPlanta) || 0), borderColor: gradLinhaIrrig, borderWidth: 3, pointBackgroundColor: '#0f172a', pointRadius: 4, tension: 0.4, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 8, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 4, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
+                    { type: 'bar', label: 'Volume (L)', data: data.map(d => parseFormattedFloat(d.volIrrigacao)), backgroundColor: gradIrrig, borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
+                    { type: 'line', label: 'L / Planta', data: data.map(d => parseFormattedFloat(d.litrosPlanta)), borderColor: gradLinhaIrrig, borderWidth: 3, pointBackgroundColor: '#0f172a', pointRadius: 4, tension: 0.4, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 8, backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 4, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
                 ], 'VOLUME HÍDRICO VS POR PLANTA');
                 configIrrigacao.options.scales.y1 = { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false } };
                 chartInst3 = new Chart(ctx3, configIrrigacao);
 
                 const ctx3p = document.getElementById('chart-irrigacao-pie').getContext('2d');
                 if(chartInst3Pie) chartInst3Pie.destroy();
-                chartInst3Pie = new Chart(ctx3p, buildChartConfig(ctx3p, 'doughnut', labels, [{ data: data.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: PIE_COLORS }], 'VOLUME POR BLOCO'));
+                chartInst3Pie = new Chart(ctx3p, buildChartConfig(ctx3p, 'doughnut', labels, [{ data: data.map(d => parseFormattedFloat(d.volIrrigacao)), backgroundColor: colorsPalette }], 'VOLUME POR BLOCO'));
 
                 // 4. ANOMALIAS TELA
                 const ctx4 = document.getElementById('chart-anomalias').getContext('2d');
@@ -920,7 +986,7 @@
 
                 const ctx4p = document.getElementById('chart-anomalias-pie').getContext('2d');
                 if(chartInst4Pie) chartInst4Pie.destroy();
-                chartInst4Pie = new Chart(ctx4p, buildChartConfig(ctx4p, 'doughnut', labels, [{ data: data.map(d => (parseFloat(d.cabPequenas) || 0) + (parseFloat(d.cabDeformadas) || 0)), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE ANOMALIAS TOTAIS'));
+                chartInst4Pie = new Chart(ctx4p, buildChartConfig(ctx4p, 'doughnut', labels, [{ data: data.map(d => (parseFormattedFloat(d.cabPequenas)) + (parseFormattedFloat(d.cabDeformadas))), backgroundColor: colorsPalette }], 'PROPORÇÃO DE ANOMALIAS TOTAIS'));
             };
 
             els.form.addEventListener('submit', (e) => {
@@ -928,7 +994,7 @@
                 calculateAll(); 
                 const nomeBloco = els.bloco.value === 'outro' ? els.blocoOutro.value : els.bloco.value;
                 const data = {
-                    id: editingId || Date.now().toString(),
+                    id: editingId || Date.now().toString() + Math.random().toString(),
                     nomeBloco, blocoValue: els.bloco.value, blocoOutroValue: els.blocoOutro.value, ciclo: els.ciclo.value,
                     bandejas: els.bandejas.value, mudas: els.mudas.value, transplantado: els.transplantado.value,
                     falhas: els.falhas.value, percGerminada: els.percGerminada.value, percFalhas: els.percFalhas.value,
@@ -937,7 +1003,6 @@
                     dTrans: els.dTrans.value, dColheita: els.dColheita.value, diasColheita: els.diasColheita.value, diasColhendo: els.diasColhendo.value,
                     cabPequenas: els.cabPequenas.value, percPequenas: els.percPequenas.value,
                     cabDeformadas: els.cabDeformadas.value, percDeformadas: els.percDeformadas.value,
-                    // Novos campos salvos
                     qtdColhida: els.qtdColhida.value,
                     produtividadeTransplantio: els.produtividadeTransplantio.value,
                     percProdutividade: els.percProdutividade.value
@@ -952,7 +1017,50 @@
                 resetForm(); renderHistory();
             });
 
-            window.deleteRecord = (id) => { records = records.filter(r => r.id !== id); localStorage.setItem('tsv_records', JSON.stringify(records)); renderHistory(); if(editingId === id) resetForm(); };
+            // Rotinas do Modal de Confirmação Seguro (Sim / Não)
+            const openDeleteModal = (id, blockName) => {
+                idToDelete = id;
+                document.getElementById('delete-modal-block-name').textContent = blockName;
+                
+                const modal = document.getElementById('delete-confirm-modal');
+                const content = document.getElementById('delete-modal-content');
+                
+                modal.classList.remove('hidden');
+                void modal.offsetWidth; // Força re-flow para transição fluida do CSS
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            };
+
+            const closeDeleteModal = () => {
+                const modal = document.getElementById('delete-confirm-modal');
+                const content = document.getElementById('delete-modal-content');
+                
+                content.classList.remove('scale-100', 'opacity-100');
+                content.classList.add('scale-95', 'opacity-0');
+                
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    idToDelete = null;
+                }, 300);
+            };
+
+            document.getElementById('btn-cancel-delete').addEventListener('click', closeDeleteModal);
+            document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+                if (idToDelete) {
+                    records = records.filter(r => r.id !== idToDelete);
+                    localStorage.setItem('tsv_records', JSON.stringify(records));
+                    renderHistory();
+                    if(editingId === idToDelete) resetForm();
+                    closeDeleteModal();
+                }
+            });
+
+            window.deleteRecord = (id) => {
+                const rec = records.find(r => r.id === id);
+                if (!rec) return;
+                openDeleteModal(id, `Bloco ${rec.nomeBloco}`);
+            };
+
             window.editRecord = (id) => {
                 const rec = records.find(r => r.id === id); if(!rec) return;
                 editingId = id;
@@ -964,14 +1072,17 @@
                 els.tempoProd.value = rec.tempoProd; els.mortas.value = rec.mortas; els.volIrrigacao.value = rec.volIrrigacao;
                 els.dTrans.value = rec.dTrans; els.dColheita.value = rec.dColheita; els.diasColhendo.value = rec.diasColhendo;
                 els.cabPequenas.value = rec.cabPequenas || ''; els.cabDeformadas.value = rec.cabDeformadas || '';
-                // Recuperar novos campos no formulário
                 els.qtdColhida.value = rec.qtdColhida || '';
                 calculateAll(); els.form.scrollIntoView({ behavior: 'smooth' });
             };
 
             window.exportComprehensiveReport = async (format) => {
                 if(records.length === 0) return;
-                const sortedRecords = [...records].sort((a, b) => a.nomeBloco.localeCompare(b.nomeBloco));
+                const sortedRecords = [...records].sort((a, b) => {
+                    const nameA = String(a && a.nomeBloco ? a.nomeBloco : '').trim();
+                    const nameB = String(b && b.nomeBloco ? b.nomeBloco : '').trim();
+                    return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+                });
                 
                 const dynamicWidth = Math.max(1750, 1000 + (sortedRecords.length * 85));
                 const exportPage = document.getElementById('export-comp-page');
@@ -981,10 +1092,6 @@
                 tbody.innerHTML = '';
                 sortedRecords.forEach((rec, idx) => {
                     const rawPercMort = parsePercNumber(rec.percMort);
-                    const rawPercPequenas = parsePercNumber(rec.percPequenas);
-                    const rawPercDeformadas = parsePercNumber(rec.percDeformadas);
-                    
-                    const formatExpPerc = (val) => parseFloat(val.toFixed(2)).toLocaleString('pt-BR');
                     
                     const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
                     const tr = document.createElement('tr');
@@ -999,7 +1106,6 @@
                         cicloCellHTML = `<span style="font-size:12px; font-weight: 600; color:#64748b; margin-left: 6px;">(${rec.ciclo})</span>`;
                     }
 
-                    // Preparando valores individuais para a exportação
                     const transVal = rec.transplantado ? rec.transplantado : '';
                     const colhidoVal = rec.qtdColhida ? rec.qtdColhida : '';
                     const prodRatioVal = rec.produtividadeTransplantio ? rec.produtividadeTransplantio : '';
@@ -1033,8 +1139,9 @@
                     tbody.appendChild(tr);
                 });
 
-                // Renderizar Gráficos Gigantes Nativos para a Exportação
                 const labels = sortedRecords.map(d => `Bl. ${d.nomeBloco}`);
+                const colorsPalette = getColors(labels.length);
+                
                 exportChartsInstances.forEach(c => c.destroy());
                 exportChartsInstances = [];
 
@@ -1053,7 +1160,7 @@
                 chart1E.options.scales.y.suggestedMax = 90; chart1E.update(); exportChartsInstances.push(chart1E);
 
                 const ctx1pE = document.getElementById('exp-chart1-pie').getContext('2d');
-                exportChartsInstances.push(new Chart(ctx1pE, buildChartConfig(ctx1pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFloat(d.falhas) || 0), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE FALHAS', true)));
+                exportChartsInstances.push(new Chart(ctx1pE, buildChartConfig(ctx1pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFormattedFloat(d.falhas)), backgroundColor: colorsPalette }], 'PROPORÇÃO DE FALHAS', true)));
 
                 // MORTALIDADE EXPORT
                 const ctx2E = document.getElementById('exp-chart2-main').getContext('2d');
@@ -1066,21 +1173,21 @@
                 chart2E.options.scales.y.suggestedMax = 5; chart2E.update(); exportChartsInstances.push(chart2E);
 
                 const ctx2pE = document.getElementById('exp-chart2-pie').getContext('2d');
-                exportChartsInstances.push(new Chart(ctx2pE, buildChartConfig(ctx2pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFloat(d.mortas) || 0), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE MORTES', true)));
+                exportChartsInstances.push(new Chart(ctx2pE, buildChartConfig(ctx2pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFormattedFloat(d.mortas)), backgroundColor: colorsPalette }], 'PROPORÇÃO DE MORTES', true)));
 
                 // IRRIGAÇÃO EXPORT
                 const ctx3E = document.getElementById('exp-chart3-main').getContext('2d');
                 const gradIrrigE = createGradient(ctx3E, '#3b82f6', '#1d4ed8');
                 const gradLinhaIrrigE = createGradient(ctx3E, '#0f172a', '#334155');
                 const configIrrigacaoE = buildChartConfig(ctx3E, 'bar', labels, [
-                    { type: 'bar', label: 'Volume (L)', data: sortedRecords.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: gradIrrigE, borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
-                    { type: 'line', label: 'L / Planta', data: sortedRecords.map(d => parseFloat(d.litrosPlanta) || 0), borderColor: gradLinhaIrrigE, borderWidth: 4, pointBackgroundColor: '#0f172a', pointRadius: 5, tension: 0.4, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 10, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 4, font: { weight: 'bold', size: 12 }, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
+                    { type: 'bar', label: 'Volume (L)', data: sortedRecords.map(d => parseFormattedFloat(d.volIrrigacao)), backgroundColor: gradIrrigE, borderRadius: 6, yAxisID: 'y', barPercentage: 0.6, datalabels: { align: 'center', anchor: 'center', formatter: (v) => v > 0 ? Math.round(v) + 'L' : '', color: '#ffffff' } },
+                    { type: 'line', label: 'L / Planta', data: sortedRecords.map(d => parseFormattedFloat(d.litrosPlanta)), borderColor: gradLinhaIrrigE, borderWidth: 4, pointBackgroundColor: '#0f172a', pointRadius: 5, tension: 0.4, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', offset: 10, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 4, font: { weight: 'bold', size: 12 }, formatter: (v) => v > 0 ? parseFloat(v.toFixed(2)).toLocaleString('pt-BR') : '', color: '#0f172a' } }
                 ], 'VOLUME HÍDRICO VS POR PLANTA', true);
                 configIrrigacaoE.options.scales.y1 = { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false } };
                 exportChartsInstances.push(new Chart(ctx3E, configIrrigacaoE));
 
                 const ctx3pE = document.getElementById('exp-chart3-pie').getContext('2d');
-                exportChartsInstances.push(new Chart(ctx3pE, buildChartConfig(ctx3pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFloat(d.volIrrigacao) || 0), backgroundColor: PIE_COLORS }], 'VOLUME POR BLOCO', true)));
+                exportChartsInstances.push(new Chart(ctx3pE, buildChartConfig(ctx3pE, 'doughnut', labels, [{ data: sortedRecords.map(d => parseFormattedFloat(d.volIrrigacao)), backgroundColor: colorsPalette }], 'VOLUME POR BLOCO', true)));
 
                 // ANOMALIAS EXPORT
                 const ctx4E = document.getElementById('exp-chart4-main').getContext('2d');
@@ -1098,16 +1205,14 @@
                 chart4E.options.scales.y.suggestedMax = 5; chart4E.update(); exportChartsInstances.push(chart4E);
 
                 const ctx4pE = document.getElementById('exp-chart4-pie').getContext('2d');
-                exportChartsInstances.push(new Chart(ctx4pE, buildChartConfig(ctx4pE, 'doughnut', labels, [{ data: sortedRecords.map(d => (parseFloat(d.cabPequenas) || 0) + (parseFloat(d.cabDeformadas) || 0)), backgroundColor: PIE_COLORS }], 'PROPORÇÃO DE ANOMALIAS TOTAIS', true)));
+                exportChartsInstances.push(new Chart(ctx4pE, buildChartConfig(ctx4pE, 'doughnut', labels, [{ data: sortedRecords.map(d => (parseFormattedFloat(d.cabPequenas)) + (parseFormattedFloat(d.cabDeformadas))), backgroundColor: colorsPalette }], 'PROPORÇÃO DE ANOMALIAS TOTAIS', true)));
 
-                // Data de Emissão
                 const now = new Date();
                 const dataString = now.toLocaleDateString('pt-BR');
                 const horaString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 document.getElementById('exp-comp-data').textContent = `${dataString} às ${horaString}`;
                 document.getElementById('exp-hora-emissao').textContent = `${dataString} às ${horaString}`;
 
-                // Processamento Final do PDF/JPEG
                 setTimeout(async () => {
                     const el = document.getElementById('export-comp-page');
                     el.style.left = '0'; el.style.zIndex = '99999';
@@ -1125,12 +1230,12 @@
                             pdf.save('Relatorio_Consolidado_TSV.pdf');
                         }
                     } catch(e) {
-                        console.error("Falha ao exportar:", e);
+                        console.error("Falha ao exportar documento:", e);
                     } finally {
                         el.style.left = '-9999px'; el.style.zIndex = '-1000';
                         exportChartsInstances.forEach(c => c.destroy());
                     }
-                }, 300);
+                }, 400);
             };
 
             renderHistory();
