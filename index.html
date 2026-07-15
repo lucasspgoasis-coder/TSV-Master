@@ -245,6 +245,10 @@
                                 <label for="perc-mortalidade" class="label-style text-rose-600">% Mortalidade</label>
                                 <input type="text" id="perc-mortalidade" readonly placeholder="0,00%" class="input-field input-readonly text-rose-700 bg-rose-50 border-rose-100">
                             </div>
+                            <div class="col-span-2 sm:col-span-3">
+                                <label for="causa-mortalidade" class="label-style text-rose-600">Causa da Mortalidade</label>
+                                <input type="text" id="causa-mortalidade" placeholder="Ex: Fungo, Pragas, Clima, etc." class="input-field border-rose-200 focus:border-rose-500 focus:shadow-rose-100">
+                            </div>
                         </div>
                     </section>
 
@@ -465,7 +469,7 @@
                                     <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Colhido</th>
                                     <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Prod. / Transp.</th>
                                     <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">% Produtividade</th>
-                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Mortalidade</th>
+                                    <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Mortalidade / Causa</th>
                                     <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">T. Prod.(dias)</th>
                                     <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Dias P/Colh.</th>
                                     <th style="padding: 12px 4px; font-weight: 800; text-transform: uppercase; border: 1px solid #cbd5e1; font-size: 11px; white-space: nowrap;">Dias Colhendo</th>
@@ -532,11 +536,10 @@
         let chartInst1 = null, chartInst2 = null, chartInst3 = null, chartInst4 = null;
         let chartInst1Pie = null, chartInst2Pie = null, chartInst3Pie = null, chartInst4Pie = null;
         let exportChartsInstances = []; 
-        let idToDelete = null; // ID temporário para exclusão segura
+        let idToDelete = null; 
 
         const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4'];
 
-        // Função de cores dinâmicas para evitar bugs quando houver mais de 11 blocos
         const getColors = (count) => {
             const colors = [];
             for (let i = 0; i < count; i++) {
@@ -545,7 +548,6 @@
             return colors;
         };
 
-        // Função para formatar etiquetas coloridas com pílulas consistentes
         const makeBadge = (text, type) => {
             const styles = {
                 'neutral': 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;',
@@ -558,7 +560,6 @@
             return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; ${styles[type]}">${text}</span>`;
         };
 
-        // Conversor seguro de strings formatadas para Float, lidando com vírgulas e vazios
         const parseFormattedFloat = (val) => {
             if (val === undefined || val === null) return 0;
             const clean = String(val).replace(',', '.').replace(/[^\d.-]/g, '');
@@ -575,7 +576,6 @@
             return isNaN(parsed) ? 0 : parsed;
         };
 
-        // Fallback robusto para campos ainda não preenchidos (Lotes em produção)
         const formatTableField = (value, badgeType = 'neutral', suffix = '') => {
             if (value === undefined || value === null || String(value).trim() === '') {
                 return `<span style="display:inline-block; white-space:nowrap; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; background:#fff7ed; color:#ea580c; border:1.5px solid #fdba74; box-shadow: 0 1px 2px rgba(234, 88, 12, 0.05); margin: 2px 0;">Em Produção</span>`;
@@ -596,7 +596,6 @@
 
             let records = JSON.parse(localStorage.getItem('tsv_records')) || [];
             
-            // Garantir que todos os registros carregados tenham um ID válido
             records.forEach(rec => {
                 if (!rec.id) rec.id = Date.now().toString() + Math.random().toString();
             });
@@ -620,6 +619,7 @@
                 tempoProd: document.getElementById('tempo-producao'),
                 mortas: document.getElementById('plantas-mortas'),
                 percMort: document.getElementById('perc-mortalidade'),
+                causaMort: document.getElementById('causa-mortalidade'),
                 
                 volIrrigacao: document.getElementById('volume-irrigacao'),
                 litrosPlanta: document.getElementById('litros-planta'),
@@ -760,7 +760,6 @@
                         return;
                     }
 
-                    // ORDENAÇÃO NUMÉRICA ROBUSTA: resolve de vez a colisão alfabética de nomes e vazios
                     const sortedRecords = [...records].sort((a, b) => {
                         const nameA = String(a && a.nomeBloco ? a.nomeBloco : '').trim();
                         const nameB = String(b && b.nomeBloco ? b.nomeBloco : '').trim();
@@ -796,6 +795,9 @@
                             } else {
                                 const fontColor = rawPercMort > 5 ? 'text-rose-600' : 'text-slate-700';
                                 mortHTML = `<span class="text-base font-extrabold ${fontColor}">${rec.mortas}</span> <span class="text-[10px] font-bold text-slate-400">(${rec.percMort || '0,00%'})</span>`;
+                                if (rec.causaMort && String(rec.causaMort).trim() !== '') {
+                                    mortHTML += `<div class="text-[10px] font-medium text-rose-500 mt-1 leading-tight line-clamp-2" title="${rec.causaMort}">Causa: ${rec.causaMort}</div>`;
+                                }
                             }
 
                             let volHTML = formatCardValue(rec.volIrrigacao, " L");
@@ -998,7 +1000,7 @@
                     nomeBloco, blocoValue: els.bloco.value, blocoOutroValue: els.blocoOutro.value, ciclo: els.ciclo.value,
                     bandejas: els.bandejas.value, mudas: els.mudas.value, transplantado: els.transplantado.value,
                     falhas: els.falhas.value, percGerminada: els.percGerminada.value, percFalhas: els.percFalhas.value,
-                    tempoProd: els.tempoProd.value, mortas: els.mortas.value, percMort: els.percMort.value,
+                    tempoProd: els.tempoProd.value, mortas: els.mortas.value, percMort: els.percMort.value, causaMort: els.causaMort.value,
                     volIrrigacao: els.volIrrigacao.value, litrosPlanta: els.litrosPlanta.value,
                     dTrans: els.dTrans.value, dColheita: els.dColheita.value, diasColheita: els.diasColheita.value, diasColhendo: els.diasColhendo.value,
                     cabPequenas: els.cabPequenas.value, percPequenas: els.percPequenas.value,
@@ -1017,7 +1019,6 @@
                 resetForm(); renderHistory();
             });
 
-            // Rotinas do Modal de Confirmação Seguro (Sim / Não)
             const openDeleteModal = (id, blockName) => {
                 idToDelete = id;
                 document.getElementById('delete-modal-block-name').textContent = blockName;
@@ -1026,7 +1027,7 @@
                 const content = document.getElementById('delete-modal-content');
                 
                 modal.classList.remove('hidden');
-                void modal.offsetWidth; // Força re-flow para transição fluida do CSS
+                void modal.offsetWidth;
                 content.classList.remove('scale-95', 'opacity-0');
                 content.classList.add('scale-100', 'opacity-100');
             };
@@ -1069,7 +1070,7 @@
                 els.bloco.value = rec.blocoValue;
                 if(rec.blocoValue === 'outro') { els.blocoOutroContainer.classList.remove('hidden'); els.blocoOutro.value = rec.blocoOutroValue; } else { els.blocoOutroContainer.classList.add('hidden'); }
                 els.ciclo.value = rec.ciclo || ''; els.bandejas.value = rec.bandejas; els.transplantado.value = rec.transplantado;
-                els.tempoProd.value = rec.tempoProd; els.mortas.value = rec.mortas; els.volIrrigacao.value = rec.volIrrigacao;
+                els.tempoProd.value = rec.tempoProd; els.mortas.value = rec.mortas; els.causaMort.value = rec.causaMort || ''; els.volIrrigacao.value = rec.volIrrigacao;
                 els.dTrans.value = rec.dTrans; els.dColheita.value = rec.dColheita; els.diasColhendo.value = rec.diasColhendo;
                 els.cabPequenas.value = rec.cabPequenas || ''; els.cabDeformadas.value = rec.cabDeformadas || '';
                 els.qtdColhida.value = rec.qtdColhida || '';
@@ -1112,6 +1113,11 @@
                     const prodPercVal = rec.percProdutividade ? rec.percProdutividade : '';
 
                     const mortVal = rec.mortas ? `${rec.mortas} (${rec.percMort})` : '';
+                    let mortExportCell = formatTableField(mortVal, rawPercMort > 5 ? 'danger' : 'success');
+                    if (rec.mortas && rec.causaMort && String(rec.causaMort).trim() !== '') {
+                        mortExportCell += `<div style="font-size: 9px; color: #be123c; margin-top: 4px; max-width: 140px; white-space: normal; line-height: 1.1; font-weight: 700; margin-left: auto; margin-right: auto; word-wrap: break-word;">Motivo: ${rec.causaMort}</div>`;
+                    }
+
                     const tempoVal = rec.tempoProd ? `${rec.tempoProd} d` : '';
                     const diasColhVal = rec.diasColheita ? rec.diasColheita : '';
                     const diasColhendoVal = rec.diasColhendo ? `${rec.diasColhendo} d` : '';
@@ -1127,7 +1133,7 @@
                         <td style="${cellStyle}">${formatTableField(colhidoVal, 'success')}</td>
                         <td style="${cellStyle}">${formatTableField(prodRatioVal, 'success')}</td>
                         <td style="${cellStyle}">${formatTableField(prodPercVal, 'success')}</td>
-                        <td style="${cellStyle}">${formatTableField(mortVal, rawPercMort > 5 ? 'danger' : 'success')}</td>
+                        <td style="${cellStyle}">${mortExportCell}</td>
                         <td style="${cellStyle}">${formatTableField(tempoVal, 'neutral')}</td>
                         <td style="${cellStyle}">${formatTableField(diasColhVal, 'neutral')}</td>
                         <td style="${cellStyle}">${formatTableField(diasColhendoVal, 'neutral')}</td>
