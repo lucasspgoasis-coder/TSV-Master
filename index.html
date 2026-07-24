@@ -93,7 +93,7 @@
         .export-page-hd {
             min-width: 1750px;
             min-height: 720px;
-            padding: 0 0 50px 0; /* Padding lateral removido para o Header ocupar toda a largura */
+            padding: 0 0 50px 0; 
             background: #ffffff;
             font-family: 'Inter', sans-serif;
             color: #1e293b;
@@ -153,6 +153,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="bloco" class="label-style">Selecione o Bloco</label>
+                                <!-- Adicionadas opções até o bloco 14 -->
                                 <select id="bloco" class="input-field font-medium" required>
                                     <option value="">Selecionar...</option>
                                     <option value="01">Bloco 01</option>
@@ -165,12 +166,16 @@
                                     <option value="08">Bloco 08</option>
                                     <option value="09">Bloco 09</option>
                                     <option value="10">Bloco 10</option>
+                                    <option value="11">Bloco 11</option>
+                                    <option value="12">Bloco 12</option>
+                                    <option value="13">Bloco 13</option>
+                                    <option value="14">Bloco 14</option>
                                     <option value="outro">Outro (Digitar)</option>
                                 </select>
                             </div>
                             <div id="bloco-outro-container" class="hidden">
                                 <label for="bloco-outro" class="label-style">Digite o Bloco</label>
-                                <input type="text" id="bloco-outro" placeholder="Ex: 11B" class="input-field">
+                                <input type="text" id="bloco-outro" placeholder="Ex: 15B" class="input-field">
                             </div>
                             <div class="sm:col-span-2">
                                 <label for="ciclo-bloco" class="label-style">Ciclo do Bloco</label>
@@ -351,11 +356,11 @@
             </div>
             
             <div class="flex flex-col gap-10 pt-4">
-                <!-- GERMINAÇÃO TELA -->
+                <!-- GERMINAÇÃO TELA (Altura h-[400px] ajustada para mais registros) -->
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-germinacao"></canvas></div>
-                        <div class="h-[320px] w-full relative"><canvas id="chart-germinacao-pie"></canvas></div>
+                        <div class="lg:col-span-2 h-[400px] w-full relative"><canvas id="chart-germinacao"></canvas></div>
+                        <div class="h-[400px] w-full relative"><canvas id="chart-germinacao-pie"></canvas></div>
                     </div>
                     <div class="w-full h-[3px] bg-gradient-to-r from-emerald-500 via-emerald-400 to-amber-500 rounded-full opacity-60 mt-6"></div>
                 </div>
@@ -363,8 +368,8 @@
                 <!-- MORTALIDADE TELA -->
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-mortalidade"></canvas></div>
-                        <div class="h-[320px] w-full relative"><canvas id="chart-mortalidade-pie"></canvas></div>
+                        <div class="lg:col-span-2 h-[400px] w-full relative"><canvas id="chart-mortalidade"></canvas></div>
+                        <div class="h-[400px] w-full relative"><canvas id="chart-mortalidade-pie"></canvas></div>
                     </div>
                     <div class="w-full h-[3px] bg-gradient-to-r from-rose-500 via-rose-400 to-red-600 rounded-full opacity-60 mt-6"></div>
                 </div>
@@ -372,8 +377,8 @@
                 <!-- IRRIGAÇÃO TELA -->
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-irrigacao"></canvas></div>
-                        <div class="h-[320px] w-full relative"><canvas id="chart-irrigacao-pie"></canvas></div>
+                        <div class="lg:col-span-2 h-[400px] w-full relative"><canvas id="chart-irrigacao"></canvas></div>
+                        <div class="h-[400px] w-full relative"><canvas id="chart-irrigacao-pie"></canvas></div>
                     </div>
                     <div class="w-full h-[3px] bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-600 rounded-full opacity-60 mt-6"></div>
                 </div>
@@ -381,8 +386,8 @@
                 <!-- ANOMALIAS (QUALIDADE) TELA -->
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-2 h-[320px] w-full relative"><canvas id="chart-anomalias"></canvas></div>
-                        <div class="h-[320px] w-full relative"><canvas id="chart-anomalias-pie"></canvas></div>
+                        <div class="lg:col-span-2 h-[400px] w-full relative"><canvas id="chart-anomalias"></canvas></div>
+                        <div class="h-[400px] w-full relative"><canvas id="chart-anomalias-pie"></canvas></div>
                     </div>
                     <div class="w-full h-[3px] bg-gradient-to-r from-purple-500 via-pink-400 to-orange-500 rounded-full opacity-60 mt-6"></div>
                 </div>
@@ -486,35 +491,35 @@
                     </div>
                 </div>
 
-                <!-- Gráficos para Exportação -->
+                <!-- Gráficos para Exportação (Tamanho aumentado para suportar até 14+ legendas laterais) -->
                 <div style="flex-grow: 1;">
                     <h2 style="font-size: 20px; font-weight: 900; color: #064e3b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 25px; display: flex; align-items: center; gap: 8px;">
                         <span style="display:inline-block; width:6px; height:18px; background-color:#2563eb; border-radius:3px;"></span> 2. Análise Gráfica & Proporção por Bloco
                     </h2>
                     
                     <!-- GERMINAÇÃO ROW EXPORT -->
-                    <div style="display: flex; gap: 30px; height: 450px;">
+                    <div style="display: flex; gap: 30px; height: 500px;">
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart1-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart1-pie"></canvas></div>
                     </div>
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #10b981, #f59e0b); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
 
                     <!-- MORTALIDADE ROW EXPORT -->
-                    <div style="display: flex; gap: 30px; height: 450px;">
+                    <div style="display: flex; gap: 30px; height: 500px;">
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart2-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart2-pie"></canvas></div>
                     </div>
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #f43f5e, #be123c); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
 
                     <!-- IRRIGAÇÃO ROW EXPORT -->
-                    <div style="display: flex; gap: 30px; height: 450px;">
+                    <div style="display: flex; gap: 30px; height: 500px;">
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart3-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart3-pie"></canvas></div>
                     </div>
                     <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #3b82f6, #1d4ed8); border-radius: 4px; margin-top: 20px; margin-bottom: 50px; opacity: 0.85;"></div>
 
                     <!-- ANOMALIAS ROW EXPORT -->
-                    <div style="display: flex; gap: 30px; height: 450px;">
+                    <div style="display: flex; gap: 30px; height: 500px;">
                         <div style="flex: 6; background: transparent; position: relative;"><canvas id="exp-chart4-main"></canvas></div>
                         <div style="flex: 4; background: transparent; position: relative;"><canvas id="exp-chart4-pie"></canvas></div>
                     </div>
@@ -538,7 +543,12 @@
         let exportChartsInstances = []; 
         let idToDelete = null; 
 
-        const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#06b6d4'];
+        /* Paleta de Cores expandida para suportar até 16 blocos sem repetição garantindo alta legibilidade */
+        const PIE_COLORS = [
+            '#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', 
+            '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16', 
+            '#06b6d4', '#a855f7', '#ef4444', '#3b82f6', '#22c55e', '#eab308'
+        ];
 
         const getColors = (count) => {
             const colors = [];
@@ -1085,7 +1095,8 @@
                     return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
                 });
                 
-                const dynamicWidth = Math.max(1750, 1000 + (sortedRecords.length * 85));
+                // Melhoria: Ajuste de escala para comportar com folga 14 ou mais blocos (crescimento suavizado)
+                const dynamicWidth = Math.max(1800, 1200 + (sortedRecords.length * 60));
                 const exportPage = document.getElementById('export-comp-page');
                 exportPage.style.width = `${dynamicWidth}px`;
                 
